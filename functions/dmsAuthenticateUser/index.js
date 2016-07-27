@@ -10,13 +10,13 @@ let ses = new AWS.SES();
  *   - operation: one of the operations in the switch statement below
  *   - payload: a parameter to pass to the operation being performed
  */
- 
+
 Date.prototype.addHours= function(h){
     this.setHours(this.getHours()+h);
     return this;
 }
 
-exports.handler = (event, context, callback) => {
+exports.handle = function(event, context, callback) {
     console.log('Received event:', JSON.stringify(event, null, 2));
 
     const operation = event.operation;
@@ -142,4 +142,4 @@ exports.handler = (event, context, callback) => {
         default:
             callback(new Error(`Unrecognized operation "${operation}"`));
     }
-};
+}

@@ -21,7 +21,7 @@ let dynamo = new AWS.DynamoDB.DocumentClient({region: 'us-west-2'});
     MissedCheckins: how many missed checkins to tolerate
 */
 
-exports.handler = (event, context, callback) => {
+exports.handle = (event, context, callback) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
 
     const operation = event.operation;

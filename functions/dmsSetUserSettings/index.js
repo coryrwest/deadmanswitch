@@ -14,7 +14,7 @@ Date.prototype.addHours= function(h){
     return this;
 }
 
-exports.handler = (event, context, callback) => {
+exports.handle = (event, context, callback) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
 
     const operation = event.operation;
