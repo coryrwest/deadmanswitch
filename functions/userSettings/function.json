@@ -1,0 +1,8 @@
+{
+  "name": "userSettings",
+  "description": "User Settings",
+  "runtime": "nodejs4.3",
+  "memory": 128,
+  "timeout": 5,
+  "role": "arn:aws:iam::796037816542:role/lambda_dynamo"
+}

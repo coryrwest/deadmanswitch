@@ -1,6 +1,5 @@
-/* Apex configuration */
-
 {
   "name": "deadmanswitch",
-  "description": "AWS Dead Man Switch Lambdas"
+  "description": "AWS Dead Man Switch Lambdas",
+  "profile": "default"
 }

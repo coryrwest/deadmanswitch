@@ -49,7 +49,7 @@ exports.handle = (event, context, callback) => {
             });
             break;
         case 'set':
-            event.payload.Item.usersettingid = event.payload.Item.usersettingid || event.payload.Item.email + new Date().getTime();
+            event.payload.Item.usersettingid = event.payload.Item.usersettingid || event.payload.Item.email + event.payload.Item.settingName;
             //event.payload.ConditionExpression = "attribute_exists(email)";
             console.log(event.payload);
             dynamo.put(event.payload, function(err, data) {
@@ -67,7 +67,7 @@ exports.handle = (event, context, callback) => {
                 Key: { "usersettingid" : id },
                 TableName: event.payload.TableName,
                 AttributeUpdates: {
-                    phonenumber: { Action: 'PUT', Value: event.payload.Item.phonenumber }
+                    settingValue: { Action: 'PUT', Value: event.payload.Item.settingValue }
                 }
             };
             

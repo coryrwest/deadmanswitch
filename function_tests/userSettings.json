@@ -1,0 +1,37 @@
+{
+  "GET": {
+    "operation": "get",
+    "payload": {
+        "Item": {
+            "email": "test@domain.com"
+        }
+    }
+  },
+  "POST": {
+    "operation" : "set",
+    "payload" : {
+      "Item": {
+        "usersettingid": "",
+        "email": "",
+        "settingName": ""
+        "settingValue": ""
+      }
+    }
+  },
+  "PUT": {
+    "operation" : "update",
+    "payload" : {
+      "Item" : {
+        
+      }
+    }
+  },
+  "DELETE": {
+    "operation" : "delete",
+    "payload" : {
+      "Item": {
+        "usersettingid": ""
+      }
+    }
+  }
+}

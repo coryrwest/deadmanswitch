@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2016-05-19T19:07:26Z",
+    "version": "2016-07-29T16:38:35Z",
     "title": "DeadManSwitch"
   },
   "host": "3g5rj8p1u2.execute-api.us-west-2.amazonaws.com",
@@ -42,10 +42,10 @@
           },
           "passthroughBehavior": "when_no_templates",
           "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:deadmanswitch_userSettings/invocations",
           "requestTemplates": {
             "application/json": "{\n    \"operation\": \"get\",\n    \"payload\": {\n        \"Item\": {\n            \"email\": \"$input.params(\"email\")\"\n        }\n    }\n}"
           },
-          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:dmsSetUserSettings/invocations",
           "type": "aws"
         }
       },
@@ -72,10 +72,10 @@
           },
           "passthroughBehavior": "when_no_templates",
           "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:deadmanswitch_userSettings/invocations",
           "requestTemplates": {
             "application/json": "{\n  \"operation\" : \"set\",\n  \"payload\" : {\n    \"Item\": $input.json('$')\n  }\n}"
           },
-          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:dmsSetUserSettings/invocations",
           "type": "aws"
         }
       },
@@ -102,10 +102,40 @@
           },
           "passthroughBehavior": "when_no_templates",
           "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:deadmanswitch_userSettings/invocations",
           "requestTemplates": {
             "application/json": "\n{\n  \"operation\" : \"update\",\n  \"payload\" : {\n    \"Item\" : $input.json('$')\n  }\n}"
           },
-          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:dmsSetUserSettings/invocations",
+          "type": "aws"
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:deadmanswitch_userSettings/invocations",
+          "requestTemplates": {
+            "application/json": "\"operation\" : \"delete\",\n    \"payload\" : {\n      \"Item\": $input.json('$')\n    }"
+          },
           "type": "aws"
         }
       }
@@ -142,10 +172,10 @@
           },
           "passthroughBehavior": "when_no_templates",
           "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:deadmanswitch_auth/invocations",
           "requestTemplates": {
             "application/json": "{\n  \"operation\" : \"createLogin\",\n  \"payload\" : {\n    \"Item\": {\n        \"email\": \"$input.params(\"email\")\"\n    }\n  }\n}"
           },
-          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:dmsAuthenticateUser/invocations",
           "type": "aws"
         }
       },
@@ -172,10 +202,10 @@
           },
           "passthroughBehavior": "when_no_templates",
           "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:deadmanswitch_auth/invocations",
           "requestTemplates": {
             "application/json": "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload\n{\n  \"operation\" : \"create\",\n  \"payload\" : {\n    \"Item\": $input.json('$')\n  }\n}"
           },
-          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:dmsAuthenticateUser/invocations",
           "type": "aws"
         }
       },
@@ -202,10 +232,10 @@
           },
           "passthroughBehavior": "when_no_templates",
           "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:deadmanswitch_auth/invocations",
           "requestTemplates": {
             "application/json": "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload\n{\n  \"operation\" : \"authenticate\",\n  \"payload\" : {\n    \"Item\": $input.json('$')\n  }\n}"
           },
-          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:796037816542:function:dmsAuthenticateUser/invocations",
           "type": "aws"
         }
       }

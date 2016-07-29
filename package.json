@@ -8,7 +8,9 @@
     "deploy": "surge -p public -d feather.surge.sh",
     "lint": "standard",
     "start": "webpack-dev-server",
-    "yolo": "npm run build && npm run deploy"
+    "yolo": "npm run build && npm run deploy",
+    "deploy-lambda": "apex deploy",
+    "test": "node ./function_tests/tests.js"
   },
   "author": "Cory Westropp",
   "license": "MIT",

@@ -10,11 +10,11 @@ let ses = new AWS.SES();
  *   - operation: one of the operations in the switch statement below
  *   - payload: a parameter to pass to the operation being performed
  */
-
 Date.prototype.addHours= function(h){
     this.setHours(this.getHours()+h);
     return this;
 }
+
 
 exports.handle = function(event, context, callback) {
     console.log('Received event:', JSON.stringify(event, null, 2));
@@ -90,10 +90,10 @@ exports.handle = function(event, context, callback) {
                 ses.sendEmail(params, function (err, data) {
                     if (err) {
                         console.log(err, err.stack);
-                        context.fail('Internal Error: The email could not be sent.');
+                        context.fail('Internal Error: The email could not be sent. ' + err);
                     } else {
-                        console.log(data);           // successful response
-                        context.succeed('The email was successfully sent to ' + event.email);
+                        console.log(data);
+                        context.succeed('The email was successfully sent to ' + key.Key.email);
                     }
                 });
             });
