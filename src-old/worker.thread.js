@@ -13,7 +13,10 @@ let settingResource = 'settings'
 // as a plain object
 const state = {
   count: 0,
-  url: '/'
+  url: '/',
+  alarms: '',
+  authToken: '',
+  userSettings: ''
 }
 
 // messages from the main thread come
@@ -43,10 +46,11 @@ self.onmessage = ({data}) => {
       state.count--
       break
     }
+    default: {
+      console.log(data);
+      break
+    }
   }
-
-  // just for fun
-  console.log('render count:', ++renderCount)
 
   // our entire app in one line:
   const newVDom = app(state)

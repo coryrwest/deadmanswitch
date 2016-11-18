@@ -13,7 +13,7 @@ import './styles/main.scss'
 const worker = new WorkerThread()
 
 // The root element that contains our app markup
-const rootElement = document.body.firstChild
+const rootElement = document.getElementById("app-container")
 
 // any time we get a message from the worker
 // it will be a set of "patches" to apply to
