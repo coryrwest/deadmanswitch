@@ -1,4 +1,14 @@
+// globals/document/
+
+html {
+  overflow-y: scroll;
+}
 
 .unsupported-browser {
-    display: none;
+  display: none;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }

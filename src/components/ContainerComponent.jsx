@@ -1,14 +1,26 @@
-var React = require('react');
+import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import { createLogin, updateEmail } from '../actions/actions.js';
+import NavTabsComponent from './NavTabsComponent.jsx';
 
+const mapStateToProps = (state) => {
+  return state;
+}
 
-var ContainerComponent = React.createClass({
-    render: function() {
-        return (
-            <div>
-            Test
-            </div>
-        );
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    createLogin: (email) => {
+        dispatch(createLogin(email))
+    },
+    updateEmail: (email) => {
+        dispatch(updateEmail(email))
     }
-});
+  }
+}
 
-module.exports = ContainerComponent;
+const ContainerComponent = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NavTabsComponent)
+
+export default ContainerComponent;

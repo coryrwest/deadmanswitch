@@ -9,18 +9,6 @@ function puts(error, stdout, stderr) {
 }
 
 // AUTH TESTS
-function authPOST() {
-    var payload = auth.POST;
-    payload.payload.Item.email = "coryrwest@gmail.com";
-    
-    console.log(payload);
-    
-    var command = "echo '" + JSON.stringify(payload) + "' | apex invoke auth";
-    
-    console.log(command);
-    
-    exec(command, puts);
-}
 function authGET() {
     var payload = auth.GET;
     payload.payload.Item.email = "coryrwest@gmail.com";
@@ -54,9 +42,6 @@ function authPUT() {
 
 function runTests(testToRun) {
     switch(testToRun){
-        case 'authPOST':
-            authPOST();
-            break;
         case 'authGET':
             authGET();
             break;
@@ -66,4 +51,5 @@ function runTests(testToRun) {
     }
 }
 
+console.log("Running test");
 runTests(process.argv[2]);
