@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createLogin, updateEmail } from '../actions/actions.js';
-import NavTabsComponent from './NavTabsComponent.jsx';
+
 
 const mapStateToProps = (state) => {
   return state;
@@ -18,9 +18,17 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   }
 }
 
-const ContainerComponent = connect(
+class DashboardComponent extends Component {
+    render() {
+        return <div>
+                    Dashboard
+                </div>;
+    }
+};
+
+const Dashboard = connect(
   mapStateToProps,
   mapDispatchToProps
-)(NavTabsComponent)
+)(DashboardComponent)
 
-export default ContainerComponent;
+export default Dashboard;
