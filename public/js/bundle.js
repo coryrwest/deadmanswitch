@@ -59,6 +59,8 @@
 
 	'use strict';
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _react = __webpack_require__(/*! react */ 2);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -77,43 +79,67 @@
 	
 	var _reactRouter = __webpack_require__(/*! react-router */ 233);
 	
-	var _reducers = __webpack_require__(/*! ./reducers/reducers.js */ 350);
+	var _reducers = __webpack_require__(/*! ./reducers/reducers.js */ 289);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	var _Public = __webpack_require__(/*! ./components/Public.jsx */ 289);
+	var _Public = __webpack_require__(/*! ./components/Public.jsx */ 295);
 	
 	var _Public2 = _interopRequireDefault(_Public);
 	
-	var _AboutText = __webpack_require__(/*! ./components/AboutText.jsx */ 348);
+	var _AboutTextC = __webpack_require__(/*! ./components/AboutTextC.jsx */ 360);
 	
-	var _AboutText2 = _interopRequireDefault(_AboutText);
+	var _AboutTextC2 = _interopRequireDefault(_AboutTextC);
 	
-	var _App = __webpack_require__(/*! ./components/App.jsx */ 358);
+	var _App = __webpack_require__(/*! ./components/App.jsx */ 341);
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _Dashboard = __webpack_require__(/*! ./components/Dashboard.jsx */ 357);
+	var _Dashboard = __webpack_require__(/*! ./components/Dashboard.jsx */ 352);
 	
 	var _Dashboard2 = _interopRequireDefault(_Dashboard);
 	
-	var _Authenticate = __webpack_require__(/*! ./components/Authenticate.jsx */ 359);
+	var _Authenticate = __webpack_require__(/*! ./components/Authenticate.jsx */ 353);
 	
 	var _Authenticate2 = _interopRequireDefault(_Authenticate);
 	
-	var _PageNotFound = __webpack_require__(/*! ./components/PageNotFound.jsx */ 360);
+	var _PageNotFoundC = __webpack_require__(/*! ./components/PageNotFoundC.jsx */ 361);
 	
-	var _PageNotFound2 = _interopRequireDefault(_PageNotFound);
+	var _PageNotFoundC2 = _interopRequireDefault(_PageNotFoundC);
+	
+	var _Logout = __webpack_require__(/*! ./components/Logout.jsx */ 359);
+	
+	var _Logout2 = _interopRequireDefault(_Logout);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(/*! ./styles/main.scss */ 351);
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 	
+	__webpack_require__(/*! ./styles/main.scss */ 355);
+	
+	// Creates store for redux
+	// Thunk used to return functions from actions, see 'createLogin' action
 	var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 	
+	// No type for 'start' will default to returning initial state
 	store.dispatch({ type: 'start' });
 	
-	var root = _reactDom2.default.render(_react2.default.createElement(
+	var PrivateRoute = function PrivateRoute(_ref) {
+	  var Component = _ref.component;
+	
+	  var rest = _objectWithoutProperties(_ref, ['component']);
+	
+	  return _react2.default.createElement(_reactRouter.Route, _extends({}, rest, { render: function render(props) {
+	      return props.authenticated ? _react2.default.createElement(Component, props) : _react2.default.createElement(_reactRouter.Redirect, { to: {
+	          pathname: '/login',
+	          state: { from: props.location }
+	        } });
+	    } }));
+	};
+	
+	var root = _reactDom2.default.render(
+	// Provider for redux. Root object that holds state and allows dispatching actions?
+	_react2.default.createElement(
 	  _reactRedux.Provider,
 	  { store: store },
 	  _react2.default.createElement(
@@ -122,12 +148,13 @@
 	    _react2.default.createElement(
 	      _reactRouter.Route,
 	      { path: '/', component: _App2.default },
-	      _react2.default.createElement(_reactRouter.Route, { path: 'dashboard', component: _Dashboard2.default }),
-	      _react2.default.createElement(_reactRouter.Route, { path: 'about', component: _AboutText2.default })
+	      _react2.default.createElement(PrivateRoute, { path: 'dashboard', component: _Dashboard2.default }),
+	      _react2.default.createElement(PrivateRoute, { path: '/logout', component: _Logout2.default })
 	    ),
 	    _react2.default.createElement(_reactRouter.Route, { path: '/login', component: _Public2.default }),
 	    _react2.default.createElement(_reactRouter.Route, { path: '/authenticate', component: _Authenticate2.default }),
-	    _react2.default.createElement(_reactRouter.Route, { path: '*', component: _PageNotFound2.default })
+	    _react2.default.createElement(_reactRouter.Route, { path: '/about', component: _AboutTextC2.default }),
+	    _react2.default.createElement(_reactRouter.Route, { path: '*', component: _PageNotFoundC2.default })
 	  )
 	), document.getElementById("app-container"));
 
@@ -30332,9 +30359,9 @@
 
 /***/ },
 /* 289 */
-/*!***********************************!*\
-  !*** ./src/components/Public.jsx ***!
-  \***********************************/
+/*!**********************************!*\
+  !*** ./src/reducers/reducers.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30343,1061 +30370,15 @@
 	    value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
-	
-	var _actions = __webpack_require__(/*! ../actions/actions.js */ 300);
-	
-	var _Login = __webpack_require__(/*! ./Login.jsx */ 349);
-	
-	var _Login2 = _interopRequireDefault(_Login);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	    return state;
-	};
-	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
-	    return {
-	        createLogin: function createLogin(email) {
-	            dispatch((0, _actions.createLogin)(email));
-	        },
-	        updateEmail: function updateEmail(email) {
-	            dispatch((0, _actions.updateEmail)(email));
-	        }
-	    };
-	};
-	
-	var PublicPagesComponent = function (_Component) {
-	    _inherits(PublicPagesComponent, _Component);
-	
-	    function PublicPagesComponent() {
-	        _classCallCheck(this, PublicPagesComponent);
-	
-	        return _possibleConstructorReturn(this, (PublicPagesComponent.__proto__ || Object.getPrototypeOf(PublicPagesComponent)).apply(this, arguments));
-	    }
-	
-	    _createClass(PublicPagesComponent, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'h2',
-	                    null,
-	                    'Login'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Please enter your email address. This will act as your login, so do not forget what email you used.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'We will send a login link to this email address whenever you want to login. You will have to click the link in the email in order to login.'
-	                ),
-	                _react2.default.createElement(_Login2.default, {
-	                    updateEmail: this.props.updateEmail,
-	                    createLogin: this.props.createLogin,
-	                    sendingLoginRequest: this.props.sendingLoginRequest,
-	                    email: this.props.email
-	                })
-	            );
-	        }
-	    }]);
-	
-	    return PublicPagesComponent;
-	}(_react.Component);
-	
-	;
-	
-	var Public = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PublicPagesComponent);
-	
-	exports.default = Public;
-
-/***/ },
-/* 290 */
-/*!**********************************!*\
-  !*** ./~/react-tabs/lib/main.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.TabPanel = exports.Tab = exports.TabList = exports.Tabs = undefined;
-	
-	var _Tabs = __webpack_require__(/*! ./components/Tabs */ 291);
-	
-	var _Tabs2 = _interopRequireDefault(_Tabs);
-	
-	var _TabList = __webpack_require__(/*! ./components/TabList */ 297);
-	
-	var _TabList2 = _interopRequireDefault(_TabList);
-	
-	var _Tab = __webpack_require__(/*! ./components/Tab */ 296);
-	
-	var _Tab2 = _interopRequireDefault(_Tab);
-	
-	var _TabPanel = __webpack_require__(/*! ./components/TabPanel */ 299);
-	
-	var _TabPanel2 = _interopRequireDefault(_TabPanel);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.Tabs = _Tabs2.default;
-	exports.TabList = _TabList2.default;
-	exports.Tab = _Tab2.default;
-	exports.TabPanel = _TabPanel2.default;
-	
-	// For bc we also export a default object, remove in 1.0
-	
-	exports.default = {
-	  Tabs: _Tabs2.default,
-	  TabList: _TabList2.default,
-	  Tab: _Tab2.default,
-	  TabPanel: _TabPanel2.default
-	};
-
-/***/ },
-/* 291 */
-/*!*********************************************!*\
-  !*** ./~/react-tabs/lib/components/Tabs.js ***!
-  \*********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(/*! react-dom */ 33);
-	
-	var _classnames = __webpack_require__(/*! classnames */ 292);
-	
-	var _classnames2 = _interopRequireDefault(_classnames);
-	
-	var _jsStylesheet = __webpack_require__(/*! js-stylesheet */ 293);
-	
-	var _jsStylesheet2 = _interopRequireDefault(_jsStylesheet);
-	
-	var _uuid = __webpack_require__(/*! ../helpers/uuid */ 294);
-	
-	var _uuid2 = _interopRequireDefault(_uuid);
-	
-	var _childrenPropType = __webpack_require__(/*! ../helpers/childrenPropType */ 295);
-	
-	var _childrenPropType2 = _interopRequireDefault(_childrenPropType);
-	
-	var _Tab = __webpack_require__(/*! ./Tab */ 296);
-	
-	var _Tab2 = _interopRequireDefault(_Tab);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	// Determine if a node from event.target is a Tab element
-	function isTabNode(node) {
-	  return node.nodeName === 'LI' && node.getAttribute('role') === 'tab';
-	}
-	
-	// Determine if a tab node is disabled
-	function isTabDisabled(node) {
-	  return node.getAttribute('aria-disabled') === 'true';
-	}
-	
-	var useDefaultStyles = true;
-	
-	module.exports = _react2.default.createClass({
-	  displayName: 'Tabs',
-	
-	  propTypes: {
-	    className: _react.PropTypes.string,
-	    selectedIndex: _react.PropTypes.number,
-	    onSelect: _react.PropTypes.func,
-	    focus: _react.PropTypes.bool,
-	    children: _childrenPropType2.default,
-	    forceRenderTabPanel: _react.PropTypes.bool
-	  },
-	
-	  childContextTypes: {
-	    forceRenderTabPanel: _react.PropTypes.bool
-	  },
-	
-	  statics: {
-	    setUseDefaultStyles: function setUseDefaultStyles(use) {
-	      useDefaultStyles = use;
-	    }
-	  },
-	
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      selectedIndex: -1,
-	      focus: false,
-	      forceRenderTabPanel: false
-	    };
-	  },
-	  getInitialState: function getInitialState() {
-	    return this.copyPropsToState(this.props, this.state);
-	  },
-	  getChildContext: function getChildContext() {
-	    return {
-	      forceRenderTabPanel: this.props.forceRenderTabPanel
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    if (useDefaultStyles) {
-	      (0, _jsStylesheet2.default)(__webpack_require__(/*! ../helpers/styles.js */ 298)); // eslint-disable-line global-require
-	    }
-	  },
-	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
-	    var _this = this;
-	
-	    // Use a transactional update to prevent race conditions
-	    // when reading the state in copyPropsToState
-	    // See https://github.com/reactjs/react-tabs/issues/51
-	    this.setState(function (state) {
-	      return _this.copyPropsToState(newProps, state);
-	    });
-	  },
-	  setSelected: function setSelected(index, focus) {
-	    // Don't do anything if nothing has changed
-	    if (index === this.state.selectedIndex) return;
-	    // Check index boundary
-	    if (index < 0 || index >= this.getTabsCount()) return;
-	
-	    // Keep reference to last index for event handler
-	    var last = this.state.selectedIndex;
-	
-	    // Check if the change event handler cancels the tab change
-	    var cancel = false;
-	
-	    // Call change event handler
-	    if (typeof this.props.onSelect === 'function') {
-	      cancel = this.props.onSelect(index, last) === false;
-	    }
-	
-	    if (!cancel) {
-	      // Update selected index
-	      this.setState({ selectedIndex: index, focus: focus === true });
-	    }
-	  },
-	  getNextTab: function getNextTab(index) {
-	    var count = this.getTabsCount();
-	
-	    // Look for non-disabled tab from index to the last tab on the right
-	    for (var i = index + 1; i < count; i++) {
-	      var tab = this.getTab(i);
-	      if (!isTabDisabled((0, _reactDom.findDOMNode)(tab))) {
-	        return i;
-	      }
-	    }
-	
-	    // If no tab found, continue searching from first on left to index
-	    for (var _i = 0; _i < index; _i++) {
-	      var _tab = this.getTab(_i);
-	      if (!isTabDisabled((0, _reactDom.findDOMNode)(_tab))) {
-	        return _i;
-	      }
-	    }
-	
-	    // No tabs are disabled, return index
-	    return index;
-	  },
-	  getPrevTab: function getPrevTab(index) {
-	    var i = index;
-	
-	    // Look for non-disabled tab from index to first tab on the left
-	    while (i--) {
-	      var tab = this.getTab(i);
-	      if (!isTabDisabled((0, _reactDom.findDOMNode)(tab))) {
-	        return i;
-	      }
-	    }
-	
-	    // If no tab found, continue searching from last tab on right to index
-	    i = this.getTabsCount();
-	    while (i-- > index) {
-	      var _tab2 = this.getTab(i);
-	      if (!isTabDisabled((0, _reactDom.findDOMNode)(_tab2))) {
-	        return i;
-	      }
-	    }
-	
-	    // No tabs are disabled, return index
-	    return index;
-	  },
-	  getTabsCount: function getTabsCount() {
-	    return this.props.children && this.props.children[0] ? _react2.default.Children.count(this.props.children[0].props.children) : 0;
-	  },
-	  getPanelsCount: function getPanelsCount() {
-	    return _react2.default.Children.count(this.props.children.slice(1));
-	  },
-	  getTabList: function getTabList() {
-	    return this.refs.tablist;
-	  },
-	  getTab: function getTab(index) {
-	    return this.refs['tabs-' + index];
-	  },
-	  getPanel: function getPanel(index) {
-	    return this.refs['panels-' + index];
-	  },
-	  getChildren: function getChildren() {
-	    var index = 0;
-	    var count = 0;
-	    var children = this.props.children;
-	    var state = this.state;
-	    var tabIds = this.tabIds = this.tabIds || [];
-	    var panelIds = this.panelIds = this.panelIds || [];
-	    var diff = this.tabIds.length - this.getTabsCount();
-	
-	    // Add ids if new tabs have been added
-	    // Don't bother removing ids, just keep them in case they are added again
-	    // This is more efficient, and keeps the uuid counter under control
-	    while (diff++ < 0) {
-	      tabIds.push((0, _uuid2.default)());
-	      panelIds.push((0, _uuid2.default)());
-	    }
-	
-	    // Map children to dynamically setup refs
-	    return _react2.default.Children.map(children, function (child) {
-	      // null happens when conditionally rendering TabPanel/Tab
-	      // see https://github.com/rackt/react-tabs/issues/37
-	      if (child === null) {
-	        return null;
-	      }
-	
-	      var result = null;
-	
-	      // Clone TabList and Tab components to have refs
-	      if (count++ === 0) {
-	        // TODO try setting the uuid in the "constructor" for `Tab`/`TabPanel`
-	        result = (0, _react.cloneElement)(child, {
-	          ref: 'tablist',
-	          children: _react2.default.Children.map(child.props.children, function (tab) {
-	            // null happens when conditionally rendering TabPanel/Tab
-	            // see https://github.com/rackt/react-tabs/issues/37
-	            if (tab === null) {
-	              return null;
-	            }
-	
-	            var ref = 'tabs-' + index;
-	            var id = tabIds[index];
-	            var panelId = panelIds[index];
-	            var selected = state.selectedIndex === index;
-	            var focus = selected && state.focus;
-	
-	            index++;
-	
-	            if (tab.type === _Tab2.default) {
-	              return (0, _react.cloneElement)(tab, {
-	                ref: ref,
-	                id: id,
-	                panelId: panelId,
-	                selected: selected,
-	                focus: focus
-	              });
-	            }
-	
-	            return tab;
-	          })
-	        });
-	
-	        // Reset index for panels
-	        index = 0;
-	      }
-	      // Clone TabPanel components to have refs
-	      else {
-	          var ref = 'panels-' + index;
-	          var id = panelIds[index];
-	          var tabId = tabIds[index];
-	          var selected = state.selectedIndex === index;
-	
-	          index++;
-	
-	          result = (0, _react.cloneElement)(child, {
-	            ref: ref,
-	            id: id,
-	            tabId: tabId,
-	            selected: selected
-	          });
-	        }
-	
-	      return result;
-	    });
-	  },
-	  handleKeyDown: function handleKeyDown(e) {
-	    if (this.isTabFromContainer(e.target)) {
-	      var index = this.state.selectedIndex;
-	      var preventDefault = false;
-	
-	      // Select next tab to the left
-	      if (e.keyCode === 37 || e.keyCode === 38) {
-	        index = this.getPrevTab(index);
-	        preventDefault = true;
-	      }
-	      // Select next tab to the right
-	      /* eslint brace-style:0 */
-	      else if (e.keyCode === 39 || e.keyCode === 40) {
-	          index = this.getNextTab(index);
-	          preventDefault = true;
-	        }
-	
-	      // This prevents scrollbars from moving around
-	      if (preventDefault) {
-	        e.preventDefault();
-	      }
-	
-	      this.setSelected(index, true);
-	    }
-	  },
-	  handleClick: function handleClick(e) {
-	    var node = e.target;
-	    do {
-	      // eslint-disable-line no-cond-assign
-	      if (this.isTabFromContainer(node)) {
-	        if (isTabDisabled(node)) {
-	          return;
-	        }
-	
-	        var index = [].slice.call(node.parentNode.children).indexOf(node);
-	        this.setSelected(index);
-	        return;
-	      }
-	    } while ((node = node.parentNode) !== null);
-	  },
-	
-	
-	  // This is an anti-pattern, so sue me
-	  copyPropsToState: function copyPropsToState(props, state) {
-	    var selectedIndex = props.selectedIndex;
-	
-	    // If no selectedIndex prop was supplied, then try
-	    // preserving the existing selectedIndex from state.
-	    // If the state has not selectedIndex, default
-	    // to the first tab in the TabList.
-	    //
-	    // TODO: Need automation testing around this
-	    // Manual testing can be done using examples/focus
-	    // See 'should preserve selectedIndex when typing' in specs/Tabs.spec.js
-	    if (selectedIndex === -1) {
-	      if (state && state.selectedIndex) {
-	        selectedIndex = state.selectedIndex;
-	      } else {
-	        selectedIndex = 0;
-	      }
-	    }
-	
-	    return {
-	      selectedIndex: selectedIndex,
-	      focus: props.focus
-	    };
-	  },
-	
-	
-	  /**
-	   * Determine if a node from event.target is a Tab element for the current Tabs container.
-	   * If the clicked element is not a Tab, it returns false.
-	   * If it finds another Tabs container between the Tab and `this`, it returns false.
-	   */
-	  isTabFromContainer: function isTabFromContainer(node) {
-	    // return immediately if the clicked element is not a Tab.
-	    if (!isTabNode(node)) {
-	      return false;
-	    }
-	
-	    // Check if the first occurrence of a Tabs container is `this` one.
-	    var nodeAncestor = node.parentElement;
-	    var tabsNode = (0, _reactDom.findDOMNode)(this);
-	    do {
-	      if (nodeAncestor === tabsNode) return true;else if (nodeAncestor.getAttribute('data-tabs')) break;
-	
-	      nodeAncestor = nodeAncestor.parentElement;
-	    } while (nodeAncestor);
-	
-	    return false;
-	  },
-	  render: function render() {
-	    var _this2 = this;
-	
-	    // This fixes an issue with focus management.
-	    //
-	    // Ultimately, when focus is true, and an input has focus,
-	    // and any change on that input causes a state change/re-render,
-	    // focus gets sent back to the active tab, and input loses focus.
-	    //
-	    // Since the focus state only needs to be remembered
-	    // for the current render, we can reset it once the
-	    // render has happened.
-	    //
-	    // Don't use setState, because we don't want to re-render.
-	    //
-	    // See https://github.com/rackt/react-tabs/pull/7
-	    if (this.state.focus) {
-	      setTimeout(function () {
-	        _this2.state.focus = false;
-	      }, 0);
-	    }
-	
-	    var _props = this.props;
-	    var className = _props.className;
-	
-	    var attributes = _objectWithoutProperties(_props, ['className']);
-	
-	    // Delete all known props, so they don't get added to DOM
-	
-	
-	    delete attributes.selectedIndex;
-	    delete attributes.onSelect;
-	    delete attributes.focus;
-	    delete attributes.children;
-	    delete attributes.forceRenderTabPanel;
-	    delete attributes.onClick;
-	    delete attributes.onKeyDown;
-	
-	    return _react2.default.createElement(
-	      'div',
-	      _extends({}, attributes, {
-	        className: (0, _classnames2.default)('ReactTabs', 'react-tabs', className),
-	        onClick: this.handleClick,
-	        onKeyDown: this.handleKeyDown,
-	        'data-tabs': true
-	      }),
-	      this.getChildren()
-	    );
-	  }
-	});
-
-/***/ },
-/* 292 */
-/*!********************************************!*\
-  !*** ./~/react-tabs/~/classnames/index.js ***!
-  \********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-	
-	(function () {
-		'use strict';
-	
-		var hasOwn = {}.hasOwnProperty;
-	
-		function classNames () {
-			var classes = [];
-	
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-	
-				var argType = typeof arg;
-	
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-	
-			return classes.join(' ');
-		}
-	
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
-/* 293 */
-/*!*********************************************!*\
-  !*** ./~/react-tabs/~/js-stylesheet/jss.js ***!
-  \*********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	!(function() {
-	  function jss(blocks) {
-	    var css = [];
-	    for (var block in blocks)
-	      css.push(createStyleBlock(block, blocks[block]));
-	    injectCSS(css);
-	  }
-	
-	  function createStyleBlock(selector, rules) {
-	    return selector + ' {\n' + parseRules(rules) + '\n}';
-	  }
-	
-	  function parseRules(rules) {
-	    var css = [];
-	    for (var rule in rules)
-	      css.push('  '+rule+': '+rules[rule]+';');
-	    return css.join('\n');
-	  }
-	
-	  function injectCSS(css) {
-	    var style = document.getElementById('jss-styles');
-	    if (!style) {
-	      style = document.createElement('style');
-	      style.setAttribute('id', 'jss-styles');
-	      var head = document.getElementsByTagName('head')[0];
-	      head.insertBefore(style, head.firstChild);
-	    }
-	    var node = document.createTextNode(css.join('\n\n'));
-	    style.appendChild(node);
-	  }
-	
-	  if (true)
-	    module.exports = jss;
-	  else
-	    window.jss = jss;
-	
-	})();
-	
-
-
-/***/ },
-/* 294 */
-/*!******************************************!*\
-  !*** ./~/react-tabs/lib/helpers/uuid.js ***!
-  \******************************************/
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	// Get a universally unique identifier
-	var count = 0;
-	module.exports = function uuid() {
-	  return "react-tabs-" + count++;
-	};
-
-/***/ },
-/* 295 */
-/*!******************************************************!*\
-  !*** ./~/react-tabs/lib/helpers/childrenPropType.js ***!
-  \******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _Tab = __webpack_require__(/*! ../components/Tab */ 296);
-	
-	var _Tab2 = _interopRequireDefault(_Tab);
-	
-	var _TabList = __webpack_require__(/*! ../components/TabList */ 297);
-	
-	var _TabList2 = _interopRequireDefault(_TabList);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	module.exports = function childrenPropTypes(props, propName) {
-	  var error = void 0;
-	  var tabsCount = 0;
-	  var panelsCount = 0;
-	  var children = props[propName];
-	
-	  _react2.default.Children.forEach(children, function (child) {
-	    // null happens when conditionally rendering TabPanel/Tab
-	    // see https://github.com/rackt/react-tabs/issues/37
-	    if (child === null) {
-	      return;
-	    }
-	
-	    if (child.type === _TabList2.default) {
-	      _react2.default.Children.forEach(child.props.children, function (c) {
-	        // null happens when conditionally rendering TabPanel/Tab
-	        // see https://github.com/rackt/react-tabs/issues/37
-	        if (c === null) {
-	          return;
-	        }
-	
-	        if (c.type === _Tab2.default) {
-	          tabsCount++;
-	        }
-	      });
-	    } else if (child.type.displayName === 'TabPanel') {
-	      panelsCount++;
-	    } else {
-	      error = new Error('Expected \'TabList\' or \'TabPanel\' but found \'' + (child.type.displayName || child.type) + '\'');
-	    }
-	  });
-	
-	  if (tabsCount !== panelsCount) {
-	    error = new Error("There should be an equal number of 'Tabs' and 'TabPanels'." + ('Received ' + tabsCount + ' \'Tabs\' and ' + panelsCount + ' \'TabPanels\'.'));
-	  }
-	
-	  return error;
-	};
-
-/***/ },
-/* 296 */
-/*!********************************************!*\
-  !*** ./~/react-tabs/lib/components/Tab.js ***!
-  \********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(/*! react-dom */ 33);
-	
-	var _classnames = __webpack_require__(/*! classnames */ 292);
-	
-	var _classnames2 = _interopRequireDefault(_classnames);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	module.exports = _react2.default.createClass({
-	  displayName: 'Tab',
-	
-	  propTypes: {
-	    className: _react.PropTypes.string,
-	    id: _react.PropTypes.string,
-	    focus: _react.PropTypes.bool,
-	    selected: _react.PropTypes.bool,
-	    disabled: _react.PropTypes.bool,
-	    activeTabClassName: _react.PropTypes.string,
-	    disabledTabClassName: _react.PropTypes.string,
-	    panelId: _react.PropTypes.string,
-	    children: _react.PropTypes.oneOfType([_react.PropTypes.array, _react.PropTypes.object, _react.PropTypes.string])
-	  },
-	
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      focus: false,
-	      selected: false,
-	      id: null,
-	      panelId: null,
-	      activeTabClassName: 'ReactTabs__Tab--selected',
-	      disabledTabClassName: 'ReactTabs__Tab--disabled'
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.checkFocus();
-	  },
-	  componentDidUpdate: function componentDidUpdate() {
-	    this.checkFocus();
-	  },
-	  checkFocus: function checkFocus() {
-	    if (this.props.selected && this.props.focus) {
-	      (0, _reactDom.findDOMNode)(this).focus();
-	    }
-	  },
-	  render: function render() {
-	    var _cx;
-	
-	    var _props = this.props;
-	    var selected = _props.selected;
-	    var disabled = _props.disabled;
-	    var panelId = _props.panelId;
-	    var activeTabClassName = _props.activeTabClassName;
-	    var disabledTabClassName = _props.disabledTabClassName;
-	    var className = _props.className;
-	    var children = _props.children;
-	    var id = _props.id;
-	
-	    var attributes = _objectWithoutProperties(_props, ['selected', 'disabled', 'panelId', 'activeTabClassName', 'disabledTabClassName', 'className', 'children', 'id']);
-	
-	    delete attributes.focus;
-	
-	    return _react2.default.createElement(
-	      'li',
-	      _extends({}, attributes, {
-	        className: (0, _classnames2.default)('ReactTabs__Tab', className, (_cx = {}, _defineProperty(_cx, activeTabClassName, selected), _defineProperty(_cx, disabledTabClassName, disabled), _cx)),
-	        role: 'tab',
-	        id: id,
-	        'aria-selected': selected ? 'true' : 'false',
-	        'aria-disabled': disabled ? 'true' : 'false',
-	        'aria-controls': panelId,
-	        tabIndex: selected ? '0' : null
-	      }),
-	      children
-	    );
-	  }
-	});
-
-/***/ },
-/* 297 */
-/*!************************************************!*\
-  !*** ./~/react-tabs/lib/components/TabList.js ***!
-  \************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _classnames = __webpack_require__(/*! classnames */ 292);
-	
-	var _classnames2 = _interopRequireDefault(_classnames);
-	
-	var _Tab = __webpack_require__(/*! ./Tab */ 296);
-	
-	var _Tab2 = _interopRequireDefault(_Tab);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	function renderChildren(props) {
-	  return _react2.default.Children.map(props.children, function (child) {
-	    // if child is not a tab we don't need to clone it
-	    // since we don't need to add custom props
-	
-	    if (child.type !== _Tab2.default) {
-	      return child;
-	    }
-	
-	    var clonedProps = {
-	      activeTabClassName: props.activeTabClassName,
-	      disabledTabClassName: props.disabledTabClassName
-	    };
-	
-	    return _react2.default.cloneElement(child, clonedProps);
-	  });
-	}
-	
-	module.exports = _react2.default.createClass({
-	  displayName: 'TabList',
-	
-	  propTypes: {
-	    className: _react.PropTypes.string,
-	    activeTabClassName: _react.PropTypes.string,
-	    disabledTabClassName: _react.PropTypes.string,
-	    children: _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array])
-	  },
-	
-	  render: function render() {
-	    var _props = this.props;
-	    var className = _props.className;
-	    var activeTabClassName = _props.activeTabClassName;
-	    var disabledTabClassName = _props.disabledTabClassName;
-	    var children = _props.children;
-	
-	    var attributes = _objectWithoutProperties(_props, ['className', 'activeTabClassName', 'disabledTabClassName', 'children']);
-	
-	    return _react2.default.createElement(
-	      'ul',
-	      _extends({}, attributes, {
-	        className: (0, _classnames2.default)('ReactTabs__TabList', className),
-	        role: 'tablist'
-	      }),
-	      renderChildren({ activeTabClassName: activeTabClassName, disabledTabClassName: disabledTabClassName, children: children })
-	    );
-	  }
-	});
-
-/***/ },
-/* 298 */
-/*!********************************************!*\
-  !*** ./~/react-tabs/lib/helpers/styles.js ***!
-  \********************************************/
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	module.exports = {
-	  '.react-tabs [role=tablist]': {
-	    'border-bottom': '1px solid #aaa',
-	    margin: '0 0 10px',
-	    padding: '0'
-	  },
-	
-	  '.react-tabs [role=tab]': {
-	    display: 'inline-block',
-	    border: '1px solid transparent',
-	    'border-bottom': 'none',
-	    bottom: '-1px',
-	    position: 'relative',
-	    'list-style': 'none',
-	    padding: '6px 12px',
-	    cursor: 'pointer'
-	  },
-	
-	  '.react-tabs [role=tab][aria-selected=true]': {
-	    background: '#fff',
-	    'border-color': '#aaa',
-	    color: 'black',
-	    'border-radius': '5px 5px 0 0',
-	    '-moz-border-radius': '5px 5px 0 0',
-	    '-webkit-border-radius': '5px 5px 0 0'
-	  },
-	
-	  '.react-tabs [role=tab][aria-disabled=true]': {
-	    color: 'GrayText',
-	    cursor: 'default'
-	  },
-	
-	  '.react-tabs [role=tab]:focus': {
-	    'box-shadow': '0 0 5px hsl(208, 99%, 50%)',
-	    'border-color': 'hsl(208, 99%, 50%)',
-	    outline: 'none'
-	  },
-	
-	  '.react-tabs [role=tab]:focus:after': {
-	    content: '""',
-	    position: 'absolute',
-	    height: '5px',
-	    left: '-4px',
-	    right: '-4px',
-	    bottom: '-5px',
-	    background: '#fff'
-	  }
-	};
-
-/***/ },
-/* 299 */
-/*!*************************************************!*\
-  !*** ./~/react-tabs/lib/components/TabPanel.js ***!
-  \*************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _classnames = __webpack_require__(/*! classnames */ 292);
-	
-	var _classnames2 = _interopRequireDefault(_classnames);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	module.exports = _react2.default.createClass({
-	  displayName: 'TabPanel',
-	
-	  propTypes: {
-	    children: _react.PropTypes.oneOfType([_react.PropTypes.array, _react.PropTypes.object, _react.PropTypes.string]),
-	    className: _react.PropTypes.string,
-	    id: _react.PropTypes.string,
-	    selected: _react.PropTypes.bool,
-	    style: _react.PropTypes.object,
-	    tabId: _react.PropTypes.string
-	  },
-	
-	  contextTypes: {
-	    forceRenderTabPanel: _react.PropTypes.bool
-	  },
-	
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      selected: false,
-	      id: null,
-	      tabId: null
-	    };
-	  },
-	  render: function render() {
-	    var _props = this.props;
-	    var className = _props.className;
-	    var children = _props.children;
-	    var selected = _props.selected;
-	    var id = _props.id;
-	    var tabId = _props.tabId;
-	    var style = _props.style;
-	
-	    var attributes = _objectWithoutProperties(_props, ['className', 'children', 'selected', 'id', 'tabId', 'style']);
-	
-	    return _react2.default.createElement(
-	      'div',
-	      _extends({}, attributes, {
-	        className: (0, _classnames2.default)('ReactTabs__TabPanel', className, {
-	          'ReactTabs__TabPanel--selected': selected
-	        }),
-	        role: 'tabpanel',
-	        id: id,
-	        'aria-labelledby': tabId,
-	        style: _extends({}, style, { display: selected ? null : 'none' })
-	      }),
-	      this.context.forceRenderTabPanel || selected ? children : null
-	    );
-	  }
-	});
-
-/***/ },
-/* 300 */
-/*!********************************!*\
-  !*** ./src/actions/actions.js ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.createLogin = createLogin;
-	exports.loginCreated = loginCreated;
-	exports.sendingLogin = sendingLogin;
-	exports.logout = logout;
-	exports.updateEmail = updateEmail;
-	
-	var _actionTypes = __webpack_require__(/*! ../constants/actionTypes */ 301);
+	var _actionTypes = __webpack_require__(/*! ../constants/actionTypes */ 290);
 	
 	var types = _interopRequireWildcard(_actionTypes);
 	
-	var _names = __webpack_require__(/*! ../constants/names */ 302);
+	var _names = __webpack_require__(/*! ../constants/names */ 291);
 	
 	var names = _interopRequireWildcard(_names);
 	
-	var _reactCookie = __webpack_require__(/*! react-cookie */ 303);
+	var _reactCookie = __webpack_require__(/*! react-cookie */ 292);
 	
 	var _reactCookie2 = _interopRequireDefault(_reactCookie);
 	
@@ -31405,52 +30386,53 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
-	var apigClientFactory = __webpack_require__(/*! aws-api-gateway-client */ 306);
+	// Load cookies
+	var email = _reactCookie2.default.load(names.EMAIL_COOKIE) || '';
+	var auth = _reactCookie2.default.load(names.AUTH_COOKIE) || '';
 	
-	var config = {
-	  invokeUrl: 'https://3g5rj8p1u2.execute-api.us-west-2.amazonaws.com/prod',
-	  apiKey: 'iGL67IJaSN9EtnWYnXAvw6u3iDbGFfuU7r2lIaX2'
+	var initialState = {
+	    email: email,
+	    authenticated: auth != +null && auth !== undefined,
+	    authCookie: auth,
+	    sendingLoginRequest: false,
+	    sentLoginRequest: false,
+	    alarms: []
 	};
-	var apigClient = apigClientFactory.newClient(config);
 	
-	function createLogin(email) {
-	  return function (dispatch) {
-	    dispatch(sendingLogin());
-	    // Send request to make login
-	    var params = {
-	      email: email
-	    };
-	    var pathTemplate = '/v1/users';
-	    var method = 'GET';
-	    apigClient.invokeApi(params, pathTemplate, method, { headers: {}, queryParams: {} }, {}).then(function (result) {
-	      // When request comes back dispatch loginComplete and wait for email
-	      _reactCookie2.default.save(names.EMAIL_COOKIE, email);
-	      dispatch(loginCreated());
-	    }).catch(function (result) {
-	      dispatch(loginCreated());
-	      throw new Error(JSON.stringify(result));
-	    });
-	  };
+	function reducers() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case types.SENDING_LOGIN_REQUEST:
+	            return Object.assign({}, state, {
+	                sendingLoginRequest: true
+	            });
+	        case types.CREATE_LOGIN:
+	            return Object.assign({}, state, {
+	                authenticated: true
+	            });
+	        case types.LOGIN_CREATED:
+	            return Object.assign({}, state, {
+	                sendingLoginRequest: false
+	            });
+	        case types.UPDATE_EMAIL:
+	            return Object.assign({}, state, {
+	                email: action.email
+	            });
+	        case types.LOGOUT:
+	            return Object.assign({}, state, {
+	                authenticated: false
+	            });
+	        default:
+	            return state;
+	    }
 	}
 	
-	function loginCreated() {
-	  return { type: types.LOGIN_CREATED };
-	}
-	
-	function sendingLogin() {
-	  return { type: types.SENDING_LOGIN_REQUEST };
-	}
-	
-	function logout() {
-	  // Delete the cookie and refresh
-	}
-	
-	function updateEmail(email) {
-	  return { type: types.UPDATE_EMAIL, email: email };
-	}
+	exports.default = reducers;
 
 /***/ },
-/* 301 */
+/* 290 */
 /*!**************************************!*\
   !*** ./src/constants/actionTypes.js ***!
   \**************************************/
@@ -31465,9 +30447,11 @@
 	var UPDATE_EMAIL = exports.UPDATE_EMAIL = 'UPDATE_EMAIL';
 	var LOGIN_CREATED = exports.LOGIN_CREATED = 'LOGIN_CREATED';
 	var SENDING_LOGIN_REQUEST = exports.SENDING_LOGIN_REQUEST = 'SENDING_LOGIN_REQUEST';
+	var AUTHENTICATE = exports.AUTHENTICATE = 'AUTHENTICATE';
+	var LOGOUT = exports.LOGOUT = 'LOGOUT';
 
 /***/ },
-/* 302 */
+/* 291 */
 /*!********************************!*\
   !*** ./src/constants/names.js ***!
   \********************************/
@@ -31482,7 +30466,7 @@
 	var AUTH_COOKIE = exports.AUTH_COOKIE = 'dms-auth';
 
 /***/ },
-/* 303 */
+/* 292 */
 /*!****************************************!*\
   !*** ./~/react-cookie/build/cookie.js ***!
   \****************************************/
@@ -31503,11 +30487,11 @@
 	exports.setRawCookie = setRawCookie;
 	exports.plugToRequest = plugToRequest;
 	
-	var _cookie = __webpack_require__(/*! cookie */ 304);
+	var _cookie = __webpack_require__(/*! cookie */ 293);
 	
 	var _cookie2 = _interopRequireDefault(_cookie);
 	
-	var _objectAssign = __webpack_require__(/*! object-assign */ 305);
+	var _objectAssign = __webpack_require__(/*! object-assign */ 294);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
@@ -31642,7 +30626,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! (webpack)/~/node-libs-browser/~/process/browser.js */ 4)))
 
 /***/ },
-/* 304 */
+/* 293 */
 /*!******************************************!*\
   !*** ./~/react-cookie/~/cookie/index.js ***!
   \******************************************/
@@ -31846,7 +30830,7 @@
 
 
 /***/ },
-/* 305 */
+/* 294 */
 /*!*************************************************!*\
   !*** ./~/react-cookie/~/object-assign/index.js ***!
   \*************************************************/
@@ -31938,7 +30922,244 @@
 
 
 /***/ },
-/* 306 */
+/* 295 */
+/*!***********************************!*\
+  !*** ./src/components/Public.jsx ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
+	
+	var _reactRouter = __webpack_require__(/*! react-router */ 233);
+	
+	var _actions = __webpack_require__(/*! ../actions/actions.js */ 296);
+	
+	var _LoginC = __webpack_require__(/*! ./LoginC.jsx */ 362);
+	
+	var _LoginC2 = _interopRequireDefault(_LoginC);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return state;
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    createLogin: function createLogin(email) {
+	      dispatch((0, _actions.createLogin)(email));
+	    },
+	    updateEmail: function updateEmail(email) {
+	      dispatch((0, _actions.updateEmail)(email));
+	    }
+	  };
+	};
+	
+	var PublicPagesComponent = function (_Component) {
+	  _inherits(PublicPagesComponent, _Component);
+	
+	  function PublicPagesComponent() {
+	    _classCallCheck(this, PublicPagesComponent);
+	
+	    return _possibleConstructorReturn(this, (PublicPagesComponent.__proto__ || Object.getPrototypeOf(PublicPagesComponent)).apply(this, arguments));
+	  }
+	
+	  _createClass(PublicPagesComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      var _ref = this.props.location.state || { from: { pathname: '/' } };
+	
+	      var from = _ref.from;
+	      var authenticated = this.props.authenticated;
+	
+	      console.log(this.props);
+	      if (authenticated) {
+	        return _react2.default.createElement(Redirect, { to: from });
+	      }
+	
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'ul',
+	          { role: 'nav' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '/about' },
+	              'About'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'h2',
+	          null,
+	          'Login'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Please enter your email address. This will act as your login, so do not forget what email you used.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'We will send a login link to this email address whenever you want to login. You will have to click the link in the email in order to login.'
+	        ),
+	        _react2.default.createElement(_LoginC2.default, {
+	          updateEmail: this.props.updateEmail,
+	          createLogin: this.props.createLogin,
+	          sendingLoginRequest: this.props.sendingLoginRequest,
+	          sentLoginRequest: this.props.sentLoginRequest,
+	          email: this.props.email
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return PublicPagesComponent;
+	}(_react.Component);
+	
+	;
+	
+	var Public = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PublicPagesComponent);
+	
+	exports.default = Public;
+
+/***/ },
+/* 296 */
+/*!********************************!*\
+  !*** ./src/actions/actions.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.createLogin = createLogin;
+	exports.authenticate = authenticate;
+	exports.loginCreated = loginCreated;
+	exports.authenticated = authenticated;
+	exports.logout = logout;
+	exports.sendingLogin = sendingLogin;
+	exports.updateEmail = updateEmail;
+	
+	var _actionTypes = __webpack_require__(/*! ../constants/actionTypes */ 290);
+	
+	var types = _interopRequireWildcard(_actionTypes);
+	
+	var _names = __webpack_require__(/*! ../constants/names */ 291);
+	
+	var names = _interopRequireWildcard(_names);
+	
+	var _reactCookie = __webpack_require__(/*! react-cookie */ 292);
+	
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var apigClientFactory = __webpack_require__(/*! aws-api-gateway-client */ 297);
+	
+	var config = {
+	  invokeUrl: 'https://3g5rj8p1u2.execute-api.us-west-2.amazonaws.com/prod',
+	  apiKey: 'iGL67IJaSN9EtnWYnXAvw6u3iDbGFfuU7r2lIaX2'
+	};
+	
+	var apigClient = apigClientFactory.newClient(config);
+	
+	function createLogin(email) {
+	  return function (dispatch) {
+	    dispatch(sendingLogin());
+	    // Send request to make login
+	    var params = {
+	      email: email
+	    };
+	    var pathTemplate = '/v1/users';
+	    var method = 'GET';
+	    apigClient.invokeApi(params, pathTemplate, method, { headers: {}, queryParams: {} }, {}).then(function (result) {
+	      // When request comes back dispatch loginComplete and wait for email
+	      _reactCookie2.default.save(names.EMAIL_COOKIE, email);
+	      dispatch(loginCreated());
+	    }).catch(function (result) {
+	      dispatch(loginCreated());
+	      throw new Error(JSON.stringify(result));
+	    });
+	  };
+	}
+	
+	function authenticate(email, hash) {
+	  return function (dispatch) {
+	    // Send request to auth
+	    var params = {
+	      email: email,
+	      hash: hash
+	    };
+	    var pathTemplate = '/v1/users';
+	    var method = 'GET';
+	    apigClient.invokeApi(params, pathTemplate, method, { headers: {}, queryParams: {} }, {}).then(function (result) {
+	      if (result.authenticated) {
+	        // When request comes back dispatch loginComplete and wait for email
+	        _reactCookie2.default.save(names.AUTH_COOKIE, hash);
+	        _reactCookie2.default.save(names.EMAIL_COOKIE, email);
+	      } else {
+	        dispatch(logout());
+	      }
+	      dispatch(authenticated());
+	    }).catch(function (result) {
+	      dispatch(logout());
+	      throw new Error(JSON.stringify(result));
+	    });
+	  };
+	}
+	
+	function loginCreated() {
+	  return { type: types.LOGIN_CREATED };
+	}
+	
+	function authenticated() {
+	  return { type: types.LOGIN_CREATED };
+	}
+	
+	function logout() {
+	  // Delete the cookie and refresh
+	  _reactCookie2.default.remove(names.AUTH_COOKIE);
+	  return { type: types.LOGOUT };
+	}
+	
+	function sendingLogin() {
+	  return { type: types.SENDING_LOGIN_REQUEST };
+	}
+	
+	function updateEmail(email) {
+	  return { type: types.UPDATE_EMAIL, email: email };
+	}
+
+/***/ },
+/* 297 */
 /*!************************************************!*\
   !*** ./~/aws-api-gateway-client/apigClient.js ***!
   \************************************************/
@@ -31960,8 +31181,8 @@
 	 */
 	
 	var apigClientFactory = {};
-	var apiGateway = __webpack_require__(/*! ./lib/apiGatewayCore/apiGatewayClient.js */ 307);
-	var uritemplate = __webpack_require__(/*! url-template */ 347);
+	var apiGateway = __webpack_require__(/*! ./lib/apiGatewayCore/apiGatewayClient.js */ 298);
+	var uritemplate = __webpack_require__(/*! url-template */ 338);
 	
 	apigClientFactory.newClient = function (config) {
 	    var apigClient = { };
@@ -32055,7 +31276,7 @@
 
 
 /***/ },
-/* 307 */
+/* 298 */
 /*!*************************************************************************!*\
   !*** ./~/aws-api-gateway-client/lib/apiGatewayCore/apiGatewayClient.js ***!
   \*************************************************************************/
@@ -32078,9 +31299,9 @@
 	 
 	var apiGateway = apiGateway || {};
 	apiGateway.core = apiGateway.core || {};
-	apiGateway.core.utils = __webpack_require__(/*! ./utils */ 308);
-	apiGateway.core.sigV4ClientFactory = __webpack_require__(/*! ./sigV4Client */ 309);
-	apiGateway.core.simpleHttpClientFactory = __webpack_require__(/*! ./simpleHttpClient */ 346);
+	apiGateway.core.utils = __webpack_require__(/*! ./utils */ 299);
+	apiGateway.core.sigV4ClientFactory = __webpack_require__(/*! ./sigV4Client */ 300);
+	apiGateway.core.simpleHttpClientFactory = __webpack_require__(/*! ./simpleHttpClient */ 337);
 	
 	apiGateway.core.apiGatewayClientFactory = {};
 	apiGateway.core.apiGatewayClientFactory.newClient = function (simpleHttpClientConfig, sigV4ClientConfig) {
@@ -32122,7 +31343,7 @@
 
 
 /***/ },
-/* 308 */
+/* 299 */
 /*!**************************************************************!*\
   !*** ./~/aws-api-gateway-client/lib/apiGatewayCore/utils.js ***!
   \**************************************************************/
@@ -32213,7 +31434,7 @@
 
 
 /***/ },
-/* 309 */
+/* 300 */
 /*!********************************************************************!*\
   !*** ./~/aws-api-gateway-client/lib/apiGatewayCore/sigV4Client.js ***!
   \********************************************************************/
@@ -32236,12 +31457,12 @@
 	 
 	var apiGateway = apiGateway || {};
 	apiGateway.core = apiGateway.core || {};
-	apiGateway.core.utils = __webpack_require__(/*! ./utils */ 308);
-	var axios = __webpack_require__(/*! axios */ 310);
-	var SHA256 = __webpack_require__(/*! crypto-js/sha256 */ 335);
-	var encHex = __webpack_require__(/*! crypto-js/enc-hex */ 337);
-	var HmacSHA256 = __webpack_require__(/*! crypto-js/hmac-sha256 */ 338);
-	var urlParser = __webpack_require__(/*! url */ 340);
+	apiGateway.core.utils = __webpack_require__(/*! ./utils */ 299);
+	var axios = __webpack_require__(/*! axios */ 301);
+	var SHA256 = __webpack_require__(/*! crypto-js/sha256 */ 326);
+	var encHex = __webpack_require__(/*! crypto-js/enc-hex */ 328);
+	var HmacSHA256 = __webpack_require__(/*! crypto-js/hmac-sha256 */ 329);
+	var urlParser = __webpack_require__(/*! url */ 331);
 	
 	apiGateway.core.sigV4ClientFactory = {};
 	apiGateway.core.sigV4ClientFactory.newClient = function (config) {
@@ -32442,16 +31663,16 @@
 
 
 /***/ },
-/* 310 */
+/* 301 */
 /*!***************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/index.js ***!
   \***************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(/*! ./lib/axios */ 311);
+	module.exports = __webpack_require__(/*! ./lib/axios */ 302);
 
 /***/ },
-/* 311 */
+/* 302 */
 /*!*******************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/axios.js ***!
   \*******************************************************/
@@ -32459,10 +31680,10 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./utils */ 312);
-	var bind = __webpack_require__(/*! ./helpers/bind */ 313);
-	var Axios = __webpack_require__(/*! ./core/Axios */ 314);
-	var defaults = __webpack_require__(/*! ./defaults */ 315);
+	var utils = __webpack_require__(/*! ./utils */ 303);
+	var bind = __webpack_require__(/*! ./helpers/bind */ 304);
+	var Axios = __webpack_require__(/*! ./core/Axios */ 305);
+	var defaults = __webpack_require__(/*! ./defaults */ 306);
 	
 	/**
 	 * Create an instance of Axios
@@ -32495,15 +31716,15 @@
 	};
 	
 	// Expose Cancel & CancelToken
-	axios.Cancel = __webpack_require__(/*! ./cancel/Cancel */ 332);
-	axios.CancelToken = __webpack_require__(/*! ./cancel/CancelToken */ 333);
-	axios.isCancel = __webpack_require__(/*! ./cancel/isCancel */ 329);
+	axios.Cancel = __webpack_require__(/*! ./cancel/Cancel */ 323);
+	axios.CancelToken = __webpack_require__(/*! ./cancel/CancelToken */ 324);
+	axios.isCancel = __webpack_require__(/*! ./cancel/isCancel */ 320);
 	
 	// Expose all/spread
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(/*! ./helpers/spread */ 334);
+	axios.spread = __webpack_require__(/*! ./helpers/spread */ 325);
 	
 	module.exports = axios;
 	
@@ -32512,7 +31733,7 @@
 
 
 /***/ },
-/* 312 */
+/* 303 */
 /*!*******************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/utils.js ***!
   \*******************************************************/
@@ -32520,7 +31741,7 @@
 
 	'use strict';
 	
-	var bind = __webpack_require__(/*! ./helpers/bind */ 313);
+	var bind = __webpack_require__(/*! ./helpers/bind */ 304);
 	
 	/*global toString:true*/
 	
@@ -32820,7 +32041,7 @@
 
 
 /***/ },
-/* 313 */
+/* 304 */
 /*!**************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/bind.js ***!
   \**************************************************************/
@@ -32840,7 +32061,7 @@
 
 
 /***/ },
-/* 314 */
+/* 305 */
 /*!************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/core/Axios.js ***!
   \************************************************************/
@@ -32848,12 +32069,12 @@
 
 	'use strict';
 	
-	var defaults = __webpack_require__(/*! ./../defaults */ 315);
-	var utils = __webpack_require__(/*! ./../utils */ 312);
-	var InterceptorManager = __webpack_require__(/*! ./InterceptorManager */ 326);
-	var dispatchRequest = __webpack_require__(/*! ./dispatchRequest */ 327);
-	var isAbsoluteURL = __webpack_require__(/*! ./../helpers/isAbsoluteURL */ 330);
-	var combineURLs = __webpack_require__(/*! ./../helpers/combineURLs */ 331);
+	var defaults = __webpack_require__(/*! ./../defaults */ 306);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
+	var InterceptorManager = __webpack_require__(/*! ./InterceptorManager */ 317);
+	var dispatchRequest = __webpack_require__(/*! ./dispatchRequest */ 318);
+	var isAbsoluteURL = __webpack_require__(/*! ./../helpers/isAbsoluteURL */ 321);
+	var combineURLs = __webpack_require__(/*! ./../helpers/combineURLs */ 322);
 	
 	/**
 	 * Create a new instance of Axios
@@ -32934,7 +32155,7 @@
 
 
 /***/ },
-/* 315 */
+/* 306 */
 /*!**********************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/defaults.js ***!
   \**********************************************************/
@@ -32942,8 +32163,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	var utils = __webpack_require__(/*! ./utils */ 312);
-	var normalizeHeaderName = __webpack_require__(/*! ./helpers/normalizeHeaderName */ 316);
+	var utils = __webpack_require__(/*! ./utils */ 303);
+	var normalizeHeaderName = __webpack_require__(/*! ./helpers/normalizeHeaderName */ 307);
 	
 	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 	var DEFAULT_CONTENT_TYPE = {
@@ -32960,10 +32181,10 @@
 	  var adapter;
 	  if (typeof XMLHttpRequest !== 'undefined') {
 	    // For browsers use XHR adapter
-	    adapter = __webpack_require__(/*! ./adapters/xhr */ 317);
+	    adapter = __webpack_require__(/*! ./adapters/xhr */ 308);
 	  } else if (typeof process !== 'undefined') {
 	    // For node use HTTP adapter
-	    adapter = __webpack_require__(/*! ./adapters/http */ 317);
+	    adapter = __webpack_require__(/*! ./adapters/http */ 308);
 	  }
 	  return adapter;
 	}
@@ -33037,7 +32258,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! (webpack)/~/node-libs-browser/~/process/browser.js */ 4)))
 
 /***/ },
-/* 316 */
+/* 307 */
 /*!*****************************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/normalizeHeaderName.js ***!
   \*****************************************************************************/
@@ -33045,7 +32266,7 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ../utils */ 312);
+	var utils = __webpack_require__(/*! ../utils */ 303);
 	
 	module.exports = function normalizeHeaderName(headers, normalizedName) {
 	  utils.forEach(headers, function processHeader(value, name) {
@@ -33058,7 +32279,7 @@
 
 
 /***/ },
-/* 317 */
+/* 308 */
 /*!**************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/adapters/xhr.js ***!
   \**************************************************************/
@@ -33066,13 +32287,13 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
-	var settle = __webpack_require__(/*! ./../core/settle */ 318);
-	var buildURL = __webpack_require__(/*! ./../helpers/buildURL */ 321);
-	var parseHeaders = __webpack_require__(/*! ./../helpers/parseHeaders */ 322);
-	var isURLSameOrigin = __webpack_require__(/*! ./../helpers/isURLSameOrigin */ 323);
-	var createError = __webpack_require__(/*! ../core/createError */ 319);
-	var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(/*! ./../helpers/btoa */ 324);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
+	var settle = __webpack_require__(/*! ./../core/settle */ 309);
+	var buildURL = __webpack_require__(/*! ./../helpers/buildURL */ 312);
+	var parseHeaders = __webpack_require__(/*! ./../helpers/parseHeaders */ 313);
+	var isURLSameOrigin = __webpack_require__(/*! ./../helpers/isURLSameOrigin */ 314);
+	var createError = __webpack_require__(/*! ../core/createError */ 310);
+	var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(/*! ./../helpers/btoa */ 315);
 	
 	module.exports = function xhrAdapter(config) {
 	  return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -33168,7 +32389,7 @@
 	    // This is only done if running in a standard browser environment.
 	    // Specifically not if we're in a web worker, or react-native.
 	    if (utils.isStandardBrowserEnv()) {
-	      var cookies = __webpack_require__(/*! ./../helpers/cookies */ 325);
+	      var cookies = __webpack_require__(/*! ./../helpers/cookies */ 316);
 	
 	      // Add xsrf header
 	      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -33245,7 +32466,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! (webpack)/~/node-libs-browser/~/process/browser.js */ 4)))
 
 /***/ },
-/* 318 */
+/* 309 */
 /*!*************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/core/settle.js ***!
   \*************************************************************/
@@ -33253,7 +32474,7 @@
 
 	'use strict';
 	
-	var createError = __webpack_require__(/*! ./createError */ 319);
+	var createError = __webpack_require__(/*! ./createError */ 310);
 	
 	/**
 	 * Resolve or reject a Promise based on response status.
@@ -33279,7 +32500,7 @@
 
 
 /***/ },
-/* 319 */
+/* 310 */
 /*!******************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/core/createError.js ***!
   \******************************************************************/
@@ -33287,7 +32508,7 @@
 
 	'use strict';
 	
-	var enhanceError = __webpack_require__(/*! ./enhanceError */ 320);
+	var enhanceError = __webpack_require__(/*! ./enhanceError */ 311);
 	
 	/**
 	 * Create an Error with the specified message, config, error code, and response.
@@ -33305,7 +32526,7 @@
 
 
 /***/ },
-/* 320 */
+/* 311 */
 /*!*******************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/core/enhanceError.js ***!
   \*******************************************************************/
@@ -33333,7 +32554,7 @@
 
 
 /***/ },
-/* 321 */
+/* 312 */
 /*!******************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/buildURL.js ***!
   \******************************************************************/
@@ -33341,7 +32562,7 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
 	
 	function encode(val) {
 	  return encodeURIComponent(val).
@@ -33410,7 +32631,7 @@
 
 
 /***/ },
-/* 322 */
+/* 313 */
 /*!**********************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/parseHeaders.js ***!
   \**********************************************************************/
@@ -33418,7 +32639,7 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
 	
 	/**
 	 * Parse headers into an object
@@ -33456,7 +32677,7 @@
 
 
 /***/ },
-/* 323 */
+/* 314 */
 /*!*************************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/isURLSameOrigin.js ***!
   \*************************************************************************/
@@ -33464,7 +32685,7 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
 	
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -33533,7 +32754,7 @@
 
 
 /***/ },
-/* 324 */
+/* 315 */
 /*!**************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/btoa.js ***!
   \**************************************************************/
@@ -33578,7 +32799,7 @@
 
 
 /***/ },
-/* 325 */
+/* 316 */
 /*!*****************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/cookies.js ***!
   \*****************************************************************/
@@ -33586,7 +32807,7 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
 	
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -33640,7 +32861,7 @@
 
 
 /***/ },
-/* 326 */
+/* 317 */
 /*!*************************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/core/InterceptorManager.js ***!
   \*************************************************************************/
@@ -33648,7 +32869,7 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
 	
 	function InterceptorManager() {
 	  this.handlers = [];
@@ -33701,7 +32922,7 @@
 
 
 /***/ },
-/* 327 */
+/* 318 */
 /*!**********************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/core/dispatchRequest.js ***!
   \**********************************************************************/
@@ -33709,10 +32930,10 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
-	var transformData = __webpack_require__(/*! ./transformData */ 328);
-	var isCancel = __webpack_require__(/*! ../cancel/isCancel */ 329);
-	var defaults = __webpack_require__(/*! ../defaults */ 315);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
+	var transformData = __webpack_require__(/*! ./transformData */ 319);
+	var isCancel = __webpack_require__(/*! ../cancel/isCancel */ 320);
+	var defaults = __webpack_require__(/*! ../defaults */ 306);
 	
 	/**
 	 * Throws a `Cancel` if cancellation has been requested.
@@ -33789,7 +33010,7 @@
 
 
 /***/ },
-/* 328 */
+/* 319 */
 /*!********************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/core/transformData.js ***!
   \********************************************************************/
@@ -33797,7 +33018,7 @@
 
 	'use strict';
 	
-	var utils = __webpack_require__(/*! ./../utils */ 312);
+	var utils = __webpack_require__(/*! ./../utils */ 303);
 	
 	/**
 	 * Transform the data for a request or a response
@@ -33818,7 +33039,7 @@
 
 
 /***/ },
-/* 329 */
+/* 320 */
 /*!*****************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/cancel/isCancel.js ***!
   \*****************************************************************/
@@ -33832,7 +33053,7 @@
 
 
 /***/ },
-/* 330 */
+/* 321 */
 /*!***********************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/isAbsoluteURL.js ***!
   \***********************************************************************/
@@ -33855,7 +33076,7 @@
 
 
 /***/ },
-/* 331 */
+/* 322 */
 /*!*********************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/combineURLs.js ***!
   \*********************************************************************/
@@ -33876,7 +33097,7 @@
 
 
 /***/ },
-/* 332 */
+/* 323 */
 /*!***************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/cancel/Cancel.js ***!
   \***************************************************************/
@@ -33904,7 +33125,7 @@
 
 
 /***/ },
-/* 333 */
+/* 324 */
 /*!********************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/cancel/CancelToken.js ***!
   \********************************************************************/
@@ -33912,7 +33133,7 @@
 
 	'use strict';
 	
-	var Cancel = __webpack_require__(/*! ./Cancel */ 332);
+	var Cancel = __webpack_require__(/*! ./Cancel */ 323);
 	
 	/**
 	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -33970,7 +33191,7 @@
 
 
 /***/ },
-/* 334 */
+/* 325 */
 /*!****************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/axios/lib/helpers/spread.js ***!
   \****************************************************************/
@@ -34006,7 +33227,7 @@
 
 
 /***/ },
-/* 335 */
+/* 326 */
 /*!********************************************************!*\
   !*** ./~/aws-api-gateway-client/~/crypto-js/sha256.js ***!
   \********************************************************/
@@ -34015,7 +33236,7 @@
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(/*! ./core */ 336));
+			module.exports = exports = factory(__webpack_require__(/*! ./core */ 327));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -34213,7 +33434,7 @@
 	}));
 
 /***/ },
-/* 336 */
+/* 327 */
 /*!******************************************************!*\
   !*** ./~/aws-api-gateway-client/~/crypto-js/core.js ***!
   \******************************************************/
@@ -34981,7 +34202,7 @@
 	}));
 
 /***/ },
-/* 337 */
+/* 328 */
 /*!*********************************************************!*\
   !*** ./~/aws-api-gateway-client/~/crypto-js/enc-hex.js ***!
   \*********************************************************/
@@ -34990,7 +34211,7 @@
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(/*! ./core */ 336));
+			module.exports = exports = factory(__webpack_require__(/*! ./core */ 327));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -35007,7 +34228,7 @@
 	}));
 
 /***/ },
-/* 338 */
+/* 329 */
 /*!*************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/crypto-js/hmac-sha256.js ***!
   \*************************************************************/
@@ -35016,7 +34237,7 @@
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(/*! ./core */ 336), __webpack_require__(/*! ./sha256 */ 335), __webpack_require__(/*! ./hmac */ 339));
+			module.exports = exports = factory(__webpack_require__(/*! ./core */ 327), __webpack_require__(/*! ./sha256 */ 326), __webpack_require__(/*! ./hmac */ 330));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -35033,7 +34254,7 @@
 	}));
 
 /***/ },
-/* 339 */
+/* 330 */
 /*!******************************************************!*\
   !*** ./~/aws-api-gateway-client/~/crypto-js/hmac.js ***!
   \******************************************************/
@@ -35042,7 +34263,7 @@
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(/*! ./core */ 336));
+			module.exports = exports = factory(__webpack_require__(/*! ./core */ 327));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -35184,7 +34405,7 @@
 	}));
 
 /***/ },
-/* 340 */
+/* 331 */
 /*!***********************************************!*\
   !*** ./~/aws-api-gateway-client/~/url/url.js ***!
   \***********************************************/
@@ -35213,8 +34434,8 @@
 	
 	'use strict';
 	
-	var punycode = __webpack_require__(/*! punycode */ 341);
-	var util = __webpack_require__(/*! ./util */ 342);
+	var punycode = __webpack_require__(/*! punycode */ 332);
+	var util = __webpack_require__(/*! ./util */ 333);
 	
 	exports.parse = urlParse;
 	exports.resolve = urlResolve;
@@ -35289,7 +34510,7 @@
 	      'gopher:': true,
 	      'file:': true
 	    },
-	    querystring = __webpack_require__(/*! querystring */ 343);
+	    querystring = __webpack_require__(/*! querystring */ 334);
 	
 	function urlParse(url, parseQueryString, slashesDenoteHost) {
 	  if (url && util.isObject(url) && url instanceof Url) return url;
@@ -35925,7 +35146,7 @@
 
 
 /***/ },
-/* 341 */
+/* 332 */
 /*!***************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/url/~/punycode/punycode.js ***!
   \***************************************************************/
@@ -36463,7 +35684,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../../webpack/buildin/module.js */ 198)(module), (function() { return this; }())))
 
 /***/ },
-/* 342 */
+/* 333 */
 /*!************************************************!*\
   !*** ./~/aws-api-gateway-client/~/url/util.js ***!
   \************************************************/
@@ -36488,7 +35709,7 @@
 
 
 /***/ },
-/* 343 */
+/* 334 */
 /*!***************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/url/~/querystring/index.js ***!
   \***************************************************************/
@@ -36496,12 +35717,12 @@
 
 	'use strict';
 	
-	exports.decode = exports.parse = __webpack_require__(/*! ./decode */ 344);
-	exports.encode = exports.stringify = __webpack_require__(/*! ./encode */ 345);
+	exports.decode = exports.parse = __webpack_require__(/*! ./decode */ 335);
+	exports.encode = exports.stringify = __webpack_require__(/*! ./encode */ 336);
 
 
 /***/ },
-/* 344 */
+/* 335 */
 /*!****************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/url/~/querystring/decode.js ***!
   \****************************************************************/
@@ -36590,7 +35811,7 @@
 
 
 /***/ },
-/* 345 */
+/* 336 */
 /*!****************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/url/~/querystring/encode.js ***!
   \****************************************************************/
@@ -36663,7 +35884,7 @@
 
 
 /***/ },
-/* 346 */
+/* 337 */
 /*!*************************************************************************!*\
   !*** ./~/aws-api-gateway-client/lib/apiGatewayCore/simpleHttpClient.js ***!
   \*************************************************************************/
@@ -36686,8 +35907,8 @@
 	 
 	var apiGateway = apiGateway || {};
 	apiGateway.core = apiGateway.core || {};
-	apiGateway.core.utils = __webpack_require__(/*! ./utils */ 308);
-	var axios = __webpack_require__(/*! axios */ 310);
+	apiGateway.core.utils = __webpack_require__(/*! ./utils */ 299);
+	var axios = __webpack_require__(/*! axios */ 301);
 	
 	apiGateway.core.simpleHttpClientFactory = {};
 	apiGateway.core.simpleHttpClientFactory.newClient = function (config) {
@@ -36757,7 +35978,7 @@
 
 
 /***/ },
-/* 347 */
+/* 338 */
 /*!*********************************************************************!*\
   !*** ./~/aws-api-gateway-client/~/url-template/lib/url-template.js ***!
   \*********************************************************************/
@@ -36958,10 +36179,1295 @@
 
 
 /***/ },
+/* 339 */,
+/* 340 */,
+/* 341 */
+/*!********************************!*\
+  !*** ./src/components/App.jsx ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
+	
+	var _reactTabs = __webpack_require__(/*! react-tabs */ 342);
+	
+	var _actions = __webpack_require__(/*! ../actions/actions.js */ 296);
+	
+	var _reactRouter = __webpack_require__(/*! react-router */ 233);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// Used to subscribe to store updates
+	var mapStateToProps = function mapStateToProps(state) {
+	  return state;
+	};
+	
+	// Used to dispatch actions that change state
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    createLogin: function createLogin(email) {
+	      dispatch((0, _actions.createLogin)(email));
+	    },
+	    updateEmail: function updateEmail(email) {
+	      dispatch((0, _actions.updateEmail)(email));
+	    }
+	  };
+	};
+	
+	var AppComponent = function (_Component) {
+	  _inherits(AppComponent, _Component);
+	
+	  function AppComponent() {
+	    _classCallCheck(this, AppComponent);
+	
+	    return _possibleConstructorReturn(this, (AppComponent.__proto__ || Object.getPrototypeOf(AppComponent)).apply(this, arguments));
+	  }
+	
+	  _createClass(AppComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'span',
+	          null,
+	          'This app is just a fun project. It makes no attempt to be secure in any meaningful way.'
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          { role: 'nav' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '/dashboard' },
+	              'Dashboard'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '/about' },
+	              'About'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '/logout' },
+	              'Logout'
+	            )
+	          )
+	        ),
+	        this.props.children
+	      );
+	    }
+	  }]);
+	
+	  return AppComponent;
+	}(_react.Component);
+	
+	;
+	
+	// How you connect the Provider to the Component to allow automatic state updating
+	// https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
+	var App = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(AppComponent);
+	
+	exports.default = App;
+
+/***/ },
+/* 342 */
+/*!**********************************!*\
+  !*** ./~/react-tabs/lib/main.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.TabPanel = exports.Tab = exports.TabList = exports.Tabs = undefined;
+	
+	var _Tabs = __webpack_require__(/*! ./components/Tabs */ 343);
+	
+	var _Tabs2 = _interopRequireDefault(_Tabs);
+	
+	var _TabList = __webpack_require__(/*! ./components/TabList */ 349);
+	
+	var _TabList2 = _interopRequireDefault(_TabList);
+	
+	var _Tab = __webpack_require__(/*! ./components/Tab */ 348);
+	
+	var _Tab2 = _interopRequireDefault(_Tab);
+	
+	var _TabPanel = __webpack_require__(/*! ./components/TabPanel */ 351);
+	
+	var _TabPanel2 = _interopRequireDefault(_TabPanel);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.Tabs = _Tabs2.default;
+	exports.TabList = _TabList2.default;
+	exports.Tab = _Tab2.default;
+	exports.TabPanel = _TabPanel2.default;
+	
+	// For bc we also export a default object, remove in 1.0
+	
+	exports.default = {
+	  Tabs: _Tabs2.default,
+	  TabList: _TabList2.default,
+	  Tab: _Tab2.default,
+	  TabPanel: _TabPanel2.default
+	};
+
+/***/ },
+/* 343 */
+/*!*********************************************!*\
+  !*** ./~/react-tabs/lib/components/Tabs.js ***!
+  \*********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 33);
+	
+	var _classnames = __webpack_require__(/*! classnames */ 344);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	var _jsStylesheet = __webpack_require__(/*! js-stylesheet */ 345);
+	
+	var _jsStylesheet2 = _interopRequireDefault(_jsStylesheet);
+	
+	var _uuid = __webpack_require__(/*! ../helpers/uuid */ 346);
+	
+	var _uuid2 = _interopRequireDefault(_uuid);
+	
+	var _childrenPropType = __webpack_require__(/*! ../helpers/childrenPropType */ 347);
+	
+	var _childrenPropType2 = _interopRequireDefault(_childrenPropType);
+	
+	var _Tab = __webpack_require__(/*! ./Tab */ 348);
+	
+	var _Tab2 = _interopRequireDefault(_Tab);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	// Determine if a node from event.target is a Tab element
+	function isTabNode(node) {
+	  return node.nodeName === 'LI' && node.getAttribute('role') === 'tab';
+	}
+	
+	// Determine if a tab node is disabled
+	function isTabDisabled(node) {
+	  return node.getAttribute('aria-disabled') === 'true';
+	}
+	
+	var useDefaultStyles = true;
+	
+	module.exports = _react2.default.createClass({
+	  displayName: 'Tabs',
+	
+	  propTypes: {
+	    className: _react.PropTypes.string,
+	    selectedIndex: _react.PropTypes.number,
+	    onSelect: _react.PropTypes.func,
+	    focus: _react.PropTypes.bool,
+	    children: _childrenPropType2.default,
+	    forceRenderTabPanel: _react.PropTypes.bool
+	  },
+	
+	  childContextTypes: {
+	    forceRenderTabPanel: _react.PropTypes.bool
+	  },
+	
+	  statics: {
+	    setUseDefaultStyles: function setUseDefaultStyles(use) {
+	      useDefaultStyles = use;
+	    }
+	  },
+	
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      selectedIndex: -1,
+	      focus: false,
+	      forceRenderTabPanel: false
+	    };
+	  },
+	  getInitialState: function getInitialState() {
+	    return this.copyPropsToState(this.props, this.state);
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      forceRenderTabPanel: this.props.forceRenderTabPanel
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    if (useDefaultStyles) {
+	      (0, _jsStylesheet2.default)(__webpack_require__(/*! ../helpers/styles.js */ 350)); // eslint-disable-line global-require
+	    }
+	  },
+	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
+	    var _this = this;
+	
+	    // Use a transactional update to prevent race conditions
+	    // when reading the state in copyPropsToState
+	    // See https://github.com/reactjs/react-tabs/issues/51
+	    this.setState(function (state) {
+	      return _this.copyPropsToState(newProps, state);
+	    });
+	  },
+	  setSelected: function setSelected(index, focus) {
+	    // Don't do anything if nothing has changed
+	    if (index === this.state.selectedIndex) return;
+	    // Check index boundary
+	    if (index < 0 || index >= this.getTabsCount()) return;
+	
+	    // Keep reference to last index for event handler
+	    var last = this.state.selectedIndex;
+	
+	    // Check if the change event handler cancels the tab change
+	    var cancel = false;
+	
+	    // Call change event handler
+	    if (typeof this.props.onSelect === 'function') {
+	      cancel = this.props.onSelect(index, last) === false;
+	    }
+	
+	    if (!cancel) {
+	      // Update selected index
+	      this.setState({ selectedIndex: index, focus: focus === true });
+	    }
+	  },
+	  getNextTab: function getNextTab(index) {
+	    var count = this.getTabsCount();
+	
+	    // Look for non-disabled tab from index to the last tab on the right
+	    for (var i = index + 1; i < count; i++) {
+	      var tab = this.getTab(i);
+	      if (!isTabDisabled((0, _reactDom.findDOMNode)(tab))) {
+	        return i;
+	      }
+	    }
+	
+	    // If no tab found, continue searching from first on left to index
+	    for (var _i = 0; _i < index; _i++) {
+	      var _tab = this.getTab(_i);
+	      if (!isTabDisabled((0, _reactDom.findDOMNode)(_tab))) {
+	        return _i;
+	      }
+	    }
+	
+	    // No tabs are disabled, return index
+	    return index;
+	  },
+	  getPrevTab: function getPrevTab(index) {
+	    var i = index;
+	
+	    // Look for non-disabled tab from index to first tab on the left
+	    while (i--) {
+	      var tab = this.getTab(i);
+	      if (!isTabDisabled((0, _reactDom.findDOMNode)(tab))) {
+	        return i;
+	      }
+	    }
+	
+	    // If no tab found, continue searching from last tab on right to index
+	    i = this.getTabsCount();
+	    while (i-- > index) {
+	      var _tab2 = this.getTab(i);
+	      if (!isTabDisabled((0, _reactDom.findDOMNode)(_tab2))) {
+	        return i;
+	      }
+	    }
+	
+	    // No tabs are disabled, return index
+	    return index;
+	  },
+	  getTabsCount: function getTabsCount() {
+	    return this.props.children && this.props.children[0] ? _react2.default.Children.count(this.props.children[0].props.children) : 0;
+	  },
+	  getPanelsCount: function getPanelsCount() {
+	    return _react2.default.Children.count(this.props.children.slice(1));
+	  },
+	  getTabList: function getTabList() {
+	    return this.refs.tablist;
+	  },
+	  getTab: function getTab(index) {
+	    return this.refs['tabs-' + index];
+	  },
+	  getPanel: function getPanel(index) {
+	    return this.refs['panels-' + index];
+	  },
+	  getChildren: function getChildren() {
+	    var index = 0;
+	    var count = 0;
+	    var children = this.props.children;
+	    var state = this.state;
+	    var tabIds = this.tabIds = this.tabIds || [];
+	    var panelIds = this.panelIds = this.panelIds || [];
+	    var diff = this.tabIds.length - this.getTabsCount();
+	
+	    // Add ids if new tabs have been added
+	    // Don't bother removing ids, just keep them in case they are added again
+	    // This is more efficient, and keeps the uuid counter under control
+	    while (diff++ < 0) {
+	      tabIds.push((0, _uuid2.default)());
+	      panelIds.push((0, _uuid2.default)());
+	    }
+	
+	    // Map children to dynamically setup refs
+	    return _react2.default.Children.map(children, function (child) {
+	      // null happens when conditionally rendering TabPanel/Tab
+	      // see https://github.com/rackt/react-tabs/issues/37
+	      if (child === null) {
+	        return null;
+	      }
+	
+	      var result = null;
+	
+	      // Clone TabList and Tab components to have refs
+	      if (count++ === 0) {
+	        // TODO try setting the uuid in the "constructor" for `Tab`/`TabPanel`
+	        result = (0, _react.cloneElement)(child, {
+	          ref: 'tablist',
+	          children: _react2.default.Children.map(child.props.children, function (tab) {
+	            // null happens when conditionally rendering TabPanel/Tab
+	            // see https://github.com/rackt/react-tabs/issues/37
+	            if (tab === null) {
+	              return null;
+	            }
+	
+	            var ref = 'tabs-' + index;
+	            var id = tabIds[index];
+	            var panelId = panelIds[index];
+	            var selected = state.selectedIndex === index;
+	            var focus = selected && state.focus;
+	
+	            index++;
+	
+	            if (tab.type === _Tab2.default) {
+	              return (0, _react.cloneElement)(tab, {
+	                ref: ref,
+	                id: id,
+	                panelId: panelId,
+	                selected: selected,
+	                focus: focus
+	              });
+	            }
+	
+	            return tab;
+	          })
+	        });
+	
+	        // Reset index for panels
+	        index = 0;
+	      }
+	      // Clone TabPanel components to have refs
+	      else {
+	          var ref = 'panels-' + index;
+	          var id = panelIds[index];
+	          var tabId = tabIds[index];
+	          var selected = state.selectedIndex === index;
+	
+	          index++;
+	
+	          result = (0, _react.cloneElement)(child, {
+	            ref: ref,
+	            id: id,
+	            tabId: tabId,
+	            selected: selected
+	          });
+	        }
+	
+	      return result;
+	    });
+	  },
+	  handleKeyDown: function handleKeyDown(e) {
+	    if (this.isTabFromContainer(e.target)) {
+	      var index = this.state.selectedIndex;
+	      var preventDefault = false;
+	
+	      // Select next tab to the left
+	      if (e.keyCode === 37 || e.keyCode === 38) {
+	        index = this.getPrevTab(index);
+	        preventDefault = true;
+	      }
+	      // Select next tab to the right
+	      /* eslint brace-style:0 */
+	      else if (e.keyCode === 39 || e.keyCode === 40) {
+	          index = this.getNextTab(index);
+	          preventDefault = true;
+	        }
+	
+	      // This prevents scrollbars from moving around
+	      if (preventDefault) {
+	        e.preventDefault();
+	      }
+	
+	      this.setSelected(index, true);
+	    }
+	  },
+	  handleClick: function handleClick(e) {
+	    var node = e.target;
+	    do {
+	      // eslint-disable-line no-cond-assign
+	      if (this.isTabFromContainer(node)) {
+	        if (isTabDisabled(node)) {
+	          return;
+	        }
+	
+	        var index = [].slice.call(node.parentNode.children).indexOf(node);
+	        this.setSelected(index);
+	        return;
+	      }
+	    } while ((node = node.parentNode) !== null);
+	  },
+	
+	
+	  // This is an anti-pattern, so sue me
+	  copyPropsToState: function copyPropsToState(props, state) {
+	    var selectedIndex = props.selectedIndex;
+	
+	    // If no selectedIndex prop was supplied, then try
+	    // preserving the existing selectedIndex from state.
+	    // If the state has not selectedIndex, default
+	    // to the first tab in the TabList.
+	    //
+	    // TODO: Need automation testing around this
+	    // Manual testing can be done using examples/focus
+	    // See 'should preserve selectedIndex when typing' in specs/Tabs.spec.js
+	    if (selectedIndex === -1) {
+	      if (state && state.selectedIndex) {
+	        selectedIndex = state.selectedIndex;
+	      } else {
+	        selectedIndex = 0;
+	      }
+	    }
+	
+	    return {
+	      selectedIndex: selectedIndex,
+	      focus: props.focus
+	    };
+	  },
+	
+	
+	  /**
+	   * Determine if a node from event.target is a Tab element for the current Tabs container.
+	   * If the clicked element is not a Tab, it returns false.
+	   * If it finds another Tabs container between the Tab and `this`, it returns false.
+	   */
+	  isTabFromContainer: function isTabFromContainer(node) {
+	    // return immediately if the clicked element is not a Tab.
+	    if (!isTabNode(node)) {
+	      return false;
+	    }
+	
+	    // Check if the first occurrence of a Tabs container is `this` one.
+	    var nodeAncestor = node.parentElement;
+	    var tabsNode = (0, _reactDom.findDOMNode)(this);
+	    do {
+	      if (nodeAncestor === tabsNode) return true;else if (nodeAncestor.getAttribute('data-tabs')) break;
+	
+	      nodeAncestor = nodeAncestor.parentElement;
+	    } while (nodeAncestor);
+	
+	    return false;
+	  },
+	  render: function render() {
+	    var _this2 = this;
+	
+	    // This fixes an issue with focus management.
+	    //
+	    // Ultimately, when focus is true, and an input has focus,
+	    // and any change on that input causes a state change/re-render,
+	    // focus gets sent back to the active tab, and input loses focus.
+	    //
+	    // Since the focus state only needs to be remembered
+	    // for the current render, we can reset it once the
+	    // render has happened.
+	    //
+	    // Don't use setState, because we don't want to re-render.
+	    //
+	    // See https://github.com/rackt/react-tabs/pull/7
+	    if (this.state.focus) {
+	      setTimeout(function () {
+	        _this2.state.focus = false;
+	      }, 0);
+	    }
+	
+	    var _props = this.props;
+	    var className = _props.className;
+	
+	    var attributes = _objectWithoutProperties(_props, ['className']);
+	
+	    // Delete all known props, so they don't get added to DOM
+	
+	
+	    delete attributes.selectedIndex;
+	    delete attributes.onSelect;
+	    delete attributes.focus;
+	    delete attributes.children;
+	    delete attributes.forceRenderTabPanel;
+	    delete attributes.onClick;
+	    delete attributes.onKeyDown;
+	
+	    return _react2.default.createElement(
+	      'div',
+	      _extends({}, attributes, {
+	        className: (0, _classnames2.default)('ReactTabs', 'react-tabs', className),
+	        onClick: this.handleClick,
+	        onKeyDown: this.handleKeyDown,
+	        'data-tabs': true
+	      }),
+	      this.getChildren()
+	    );
+	  }
+	});
+
+/***/ },
+/* 344 */
+/*!********************************************!*\
+  !*** ./~/react-tabs/~/classnames/index.js ***!
+  \********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+	
+	(function () {
+		'use strict';
+	
+		var hasOwn = {}.hasOwnProperty;
+	
+		function classNames () {
+			var classes = [];
+	
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+	
+				var argType = typeof arg;
+	
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+	
+			return classes.join(' ');
+		}
+	
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 345 */
+/*!*********************************************!*\
+  !*** ./~/react-tabs/~/js-stylesheet/jss.js ***!
+  \*********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	!(function() {
+	  function jss(blocks) {
+	    var css = [];
+	    for (var block in blocks)
+	      css.push(createStyleBlock(block, blocks[block]));
+	    injectCSS(css);
+	  }
+	
+	  function createStyleBlock(selector, rules) {
+	    return selector + ' {\n' + parseRules(rules) + '\n}';
+	  }
+	
+	  function parseRules(rules) {
+	    var css = [];
+	    for (var rule in rules)
+	      css.push('  '+rule+': '+rules[rule]+';');
+	    return css.join('\n');
+	  }
+	
+	  function injectCSS(css) {
+	    var style = document.getElementById('jss-styles');
+	    if (!style) {
+	      style = document.createElement('style');
+	      style.setAttribute('id', 'jss-styles');
+	      var head = document.getElementsByTagName('head')[0];
+	      head.insertBefore(style, head.firstChild);
+	    }
+	    var node = document.createTextNode(css.join('\n\n'));
+	    style.appendChild(node);
+	  }
+	
+	  if (true)
+	    module.exports = jss;
+	  else
+	    window.jss = jss;
+	
+	})();
+	
+
+
+/***/ },
+/* 346 */
+/*!******************************************!*\
+  !*** ./~/react-tabs/lib/helpers/uuid.js ***!
+  \******************************************/
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	// Get a universally unique identifier
+	var count = 0;
+	module.exports = function uuid() {
+	  return "react-tabs-" + count++;
+	};
+
+/***/ },
+/* 347 */
+/*!******************************************************!*\
+  !*** ./~/react-tabs/lib/helpers/childrenPropType.js ***!
+  \******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Tab = __webpack_require__(/*! ../components/Tab */ 348);
+	
+	var _Tab2 = _interopRequireDefault(_Tab);
+	
+	var _TabList = __webpack_require__(/*! ../components/TabList */ 349);
+	
+	var _TabList2 = _interopRequireDefault(_TabList);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	module.exports = function childrenPropTypes(props, propName) {
+	  var error = void 0;
+	  var tabsCount = 0;
+	  var panelsCount = 0;
+	  var children = props[propName];
+	
+	  _react2.default.Children.forEach(children, function (child) {
+	    // null happens when conditionally rendering TabPanel/Tab
+	    // see https://github.com/rackt/react-tabs/issues/37
+	    if (child === null) {
+	      return;
+	    }
+	
+	    if (child.type === _TabList2.default) {
+	      _react2.default.Children.forEach(child.props.children, function (c) {
+	        // null happens when conditionally rendering TabPanel/Tab
+	        // see https://github.com/rackt/react-tabs/issues/37
+	        if (c === null) {
+	          return;
+	        }
+	
+	        if (c.type === _Tab2.default) {
+	          tabsCount++;
+	        }
+	      });
+	    } else if (child.type.displayName === 'TabPanel') {
+	      panelsCount++;
+	    } else {
+	      error = new Error('Expected \'TabList\' or \'TabPanel\' but found \'' + (child.type.displayName || child.type) + '\'');
+	    }
+	  });
+	
+	  if (tabsCount !== panelsCount) {
+	    error = new Error("There should be an equal number of 'Tabs' and 'TabPanels'." + ('Received ' + tabsCount + ' \'Tabs\' and ' + panelsCount + ' \'TabPanels\'.'));
+	  }
+	
+	  return error;
+	};
+
+/***/ },
 /* 348 */
+/*!********************************************!*\
+  !*** ./~/react-tabs/lib/components/Tab.js ***!
+  \********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 33);
+	
+	var _classnames = __webpack_require__(/*! classnames */ 344);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	module.exports = _react2.default.createClass({
+	  displayName: 'Tab',
+	
+	  propTypes: {
+	    className: _react.PropTypes.string,
+	    id: _react.PropTypes.string,
+	    focus: _react.PropTypes.bool,
+	    selected: _react.PropTypes.bool,
+	    disabled: _react.PropTypes.bool,
+	    activeTabClassName: _react.PropTypes.string,
+	    disabledTabClassName: _react.PropTypes.string,
+	    panelId: _react.PropTypes.string,
+	    children: _react.PropTypes.oneOfType([_react.PropTypes.array, _react.PropTypes.object, _react.PropTypes.string])
+	  },
+	
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      focus: false,
+	      selected: false,
+	      id: null,
+	      panelId: null,
+	      activeTabClassName: 'ReactTabs__Tab--selected',
+	      disabledTabClassName: 'ReactTabs__Tab--disabled'
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.checkFocus();
+	  },
+	  componentDidUpdate: function componentDidUpdate() {
+	    this.checkFocus();
+	  },
+	  checkFocus: function checkFocus() {
+	    if (this.props.selected && this.props.focus) {
+	      (0, _reactDom.findDOMNode)(this).focus();
+	    }
+	  },
+	  render: function render() {
+	    var _cx;
+	
+	    var _props = this.props;
+	    var selected = _props.selected;
+	    var disabled = _props.disabled;
+	    var panelId = _props.panelId;
+	    var activeTabClassName = _props.activeTabClassName;
+	    var disabledTabClassName = _props.disabledTabClassName;
+	    var className = _props.className;
+	    var children = _props.children;
+	    var id = _props.id;
+	
+	    var attributes = _objectWithoutProperties(_props, ['selected', 'disabled', 'panelId', 'activeTabClassName', 'disabledTabClassName', 'className', 'children', 'id']);
+	
+	    delete attributes.focus;
+	
+	    return _react2.default.createElement(
+	      'li',
+	      _extends({}, attributes, {
+	        className: (0, _classnames2.default)('ReactTabs__Tab', className, (_cx = {}, _defineProperty(_cx, activeTabClassName, selected), _defineProperty(_cx, disabledTabClassName, disabled), _cx)),
+	        role: 'tab',
+	        id: id,
+	        'aria-selected': selected ? 'true' : 'false',
+	        'aria-disabled': disabled ? 'true' : 'false',
+	        'aria-controls': panelId,
+	        tabIndex: selected ? '0' : null
+	      }),
+	      children
+	    );
+	  }
+	});
+
+/***/ },
+/* 349 */
+/*!************************************************!*\
+  !*** ./~/react-tabs/lib/components/TabList.js ***!
+  \************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _classnames = __webpack_require__(/*! classnames */ 344);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	var _Tab = __webpack_require__(/*! ./Tab */ 348);
+	
+	var _Tab2 = _interopRequireDefault(_Tab);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	function renderChildren(props) {
+	  return _react2.default.Children.map(props.children, function (child) {
+	    // if child is not a tab we don't need to clone it
+	    // since we don't need to add custom props
+	
+	    if (child.type !== _Tab2.default) {
+	      return child;
+	    }
+	
+	    var clonedProps = {
+	      activeTabClassName: props.activeTabClassName,
+	      disabledTabClassName: props.disabledTabClassName
+	    };
+	
+	    return _react2.default.cloneElement(child, clonedProps);
+	  });
+	}
+	
+	module.exports = _react2.default.createClass({
+	  displayName: 'TabList',
+	
+	  propTypes: {
+	    className: _react.PropTypes.string,
+	    activeTabClassName: _react.PropTypes.string,
+	    disabledTabClassName: _react.PropTypes.string,
+	    children: _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array])
+	  },
+	
+	  render: function render() {
+	    var _props = this.props;
+	    var className = _props.className;
+	    var activeTabClassName = _props.activeTabClassName;
+	    var disabledTabClassName = _props.disabledTabClassName;
+	    var children = _props.children;
+	
+	    var attributes = _objectWithoutProperties(_props, ['className', 'activeTabClassName', 'disabledTabClassName', 'children']);
+	
+	    return _react2.default.createElement(
+	      'ul',
+	      _extends({}, attributes, {
+	        className: (0, _classnames2.default)('ReactTabs__TabList', className),
+	        role: 'tablist'
+	      }),
+	      renderChildren({ activeTabClassName: activeTabClassName, disabledTabClassName: disabledTabClassName, children: children })
+	    );
+	  }
+	});
+
+/***/ },
+/* 350 */
+/*!********************************************!*\
+  !*** ./~/react-tabs/lib/helpers/styles.js ***!
+  \********************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = {
+	  '.react-tabs [role=tablist]': {
+	    'border-bottom': '1px solid #aaa',
+	    margin: '0 0 10px',
+	    padding: '0'
+	  },
+	
+	  '.react-tabs [role=tab]': {
+	    display: 'inline-block',
+	    border: '1px solid transparent',
+	    'border-bottom': 'none',
+	    bottom: '-1px',
+	    position: 'relative',
+	    'list-style': 'none',
+	    padding: '6px 12px',
+	    cursor: 'pointer'
+	  },
+	
+	  '.react-tabs [role=tab][aria-selected=true]': {
+	    background: '#fff',
+	    'border-color': '#aaa',
+	    color: 'black',
+	    'border-radius': '5px 5px 0 0',
+	    '-moz-border-radius': '5px 5px 0 0',
+	    '-webkit-border-radius': '5px 5px 0 0'
+	  },
+	
+	  '.react-tabs [role=tab][aria-disabled=true]': {
+	    color: 'GrayText',
+	    cursor: 'default'
+	  },
+	
+	  '.react-tabs [role=tab]:focus': {
+	    'box-shadow': '0 0 5px hsl(208, 99%, 50%)',
+	    'border-color': 'hsl(208, 99%, 50%)',
+	    outline: 'none'
+	  },
+	
+	  '.react-tabs [role=tab]:focus:after': {
+	    content: '""',
+	    position: 'absolute',
+	    height: '5px',
+	    left: '-4px',
+	    right: '-4px',
+	    bottom: '-5px',
+	    background: '#fff'
+	  }
+	};
+
+/***/ },
+/* 351 */
+/*!*************************************************!*\
+  !*** ./~/react-tabs/lib/components/TabPanel.js ***!
+  \*************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _classnames = __webpack_require__(/*! classnames */ 344);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	module.exports = _react2.default.createClass({
+	  displayName: 'TabPanel',
+	
+	  propTypes: {
+	    children: _react.PropTypes.oneOfType([_react.PropTypes.array, _react.PropTypes.object, _react.PropTypes.string]),
+	    className: _react.PropTypes.string,
+	    id: _react.PropTypes.string,
+	    selected: _react.PropTypes.bool,
+	    style: _react.PropTypes.object,
+	    tabId: _react.PropTypes.string
+	  },
+	
+	  contextTypes: {
+	    forceRenderTabPanel: _react.PropTypes.bool
+	  },
+	
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      selected: false,
+	      id: null,
+	      tabId: null
+	    };
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var className = _props.className;
+	    var children = _props.children;
+	    var selected = _props.selected;
+	    var id = _props.id;
+	    var tabId = _props.tabId;
+	    var style = _props.style;
+	
+	    var attributes = _objectWithoutProperties(_props, ['className', 'children', 'selected', 'id', 'tabId', 'style']);
+	
+	    return _react2.default.createElement(
+	      'div',
+	      _extends({}, attributes, {
+	        className: (0, _classnames2.default)('ReactTabs__TabPanel', className, {
+	          'ReactTabs__TabPanel--selected': selected
+	        }),
+	        role: 'tabpanel',
+	        id: id,
+	        'aria-labelledby': tabId,
+	        style: _extends({}, style, { display: selected ? null : 'none' })
+	      }),
+	      this.context.forceRenderTabPanel || selected ? children : null
+	    );
+	  }
+	});
+
+/***/ },
+/* 352 */
 /*!**************************************!*\
-  !*** ./src/components/AboutText.jsx ***!
+  !*** ./src/components/Dashboard.jsx ***!
   \**************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
+	
+	var _actions = __webpack_require__(/*! ../actions/actions.js */ 296);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return state;
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    createLogin: function createLogin(email) {
+	      dispatch((0, _actions.createLogin)(email));
+	    },
+	    updateEmail: function updateEmail(email) {
+	      dispatch((0, _actions.updateEmail)(email));
+	    }
+	  };
+	};
+	
+	var AlarmRow = function (_Component) {
+	  _inherits(AlarmRow, _Component);
+	
+	  function AlarmRow() {
+	    _classCallCheck(this, AlarmRow);
+	
+	    return _possibleConstructorReturn(this, (AlarmRow.__proto__ || Object.getPrototypeOf(AlarmRow)).apply(this, arguments));
+	  }
+	
+	  _createClass(AlarmRow, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('tr', null);
+	    }
+	  }]);
+	
+	  return AlarmRow;
+	}(_react.Component);
+	
+	var DashboardComponent = function (_Component2) {
+	  _inherits(DashboardComponent, _Component2);
+	
+	  function DashboardComponent() {
+	    _classCallCheck(this, DashboardComponent);
+	
+	    return _possibleConstructorReturn(this, (DashboardComponent.__proto__ || Object.getPrototypeOf(DashboardComponent)).apply(this, arguments));
+	  }
+	
+	  _createClass(DashboardComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          'Alarms',
+	          _react2.default.createElement(
+	            'table',
+	            null,
+	            _react2.default.createElement(
+	              'thead',
+	              null,
+	              _react2.default.createElement(
+	                'tr',
+	                null,
+	                _react2.default.createElement(
+	                  'th',
+	                  null,
+	                  'Name'
+	                ),
+	                _react2.default.createElement(
+	                  'th',
+	                  null,
+	                  'Email'
+	                ),
+	                _react2.default.createElement(
+	                  'th',
+	                  null,
+	                  'Phone'
+	                ),
+	                _react2.default.createElement(
+	                  'th',
+	                  null,
+	                  'Subject'
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'tbody',
+	              null,
+	              this.props.alarms.length == 0 ? "You have no alarms" : this.props.alarms.map(function () {
+	                _react2.default.createElement(AlarmRow, null);
+	              })
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return DashboardComponent;
+	}(_react.Component);
+	
+	;
+	
+	var Dashboard = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(DashboardComponent);
+	
+	exports.default = Dashboard;
+
+/***/ },
+/* 353 */
+/*!*****************************************!*\
+  !*** ./src/components/Authenticate.jsx ***!
+  \*****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
+	
+	var _actions = __webpack_require__(/*! ../actions/actions.js */ 296);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return state;
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    authenticate: function authenticate(hash) {
+	      dispatch((0, _actions.authenticate)(hash));
+	    }
+	  };
+	};
+	
+	var AuthenticateComponent = function (_Component) {
+	  _inherits(AuthenticateComponent, _Component);
+	
+	  function AuthenticateComponent() {
+	    _classCallCheck(this, AuthenticateComponent);
+	
+	    return _possibleConstructorReturn(this, (AuthenticateComponent.__proto__ || Object.getPrototypeOf(AuthenticateComponent)).apply(this, arguments));
+	  }
+	
+	  _createClass(AuthenticateComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        'Authenticated'
+	      );
+	    }
+	  }]);
+	
+	  return AuthenticateComponent;
+	}(_react.Component);
+	
+	;
+	
+	var Authenticate = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(AuthenticateComponent);
+	
+	exports.default = Authenticate;
+
+/***/ },
+/* 354 */,
+/* 355 */
+/*!******************************!*\
+  !*** ./src/styles/main.scss ***!
+  \******************************/
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 356 */,
+/* 357 */,
+/* 358 */,
+/* 359 */
+/*!***********************************!*\
+  !*** ./src/components/Logout.jsx ***!
+  \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36976,6 +37482,82 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
+	
+	var _actions = __webpack_require__(/*! ../actions/actions.js */ 296);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	    return state;
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        logout: function logout(email) {
+	            dispatch((0, _actions.logout)(email));
+	        }
+	    };
+	};
+	
+	var LogoutComponent = function (_Component) {
+	    _inherits(LogoutComponent, _Component);
+	
+	    function LogoutComponent() {
+	        _classCallCheck(this, LogoutComponent);
+	
+	        return _possibleConstructorReturn(this, (LogoutComponent.__proto__ || Object.getPrototypeOf(LogoutComponent)).apply(this, arguments));
+	    }
+	
+	    _createClass(LogoutComponent, [{
+	        key: 'render',
+	        value: function render() {
+	            this.props.logout(this.props.email);
+	
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                'Logging out'
+	            );
+	        }
+	    }]);
+	
+	    return LogoutComponent;
+	}(_react.Component);
+	
+	;
+	
+	var Logout = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(LogoutComponent);
+	
+	exports.default = Logout;
+
+/***/ },
+/* 360 */
+/*!***************************************!*\
+  !*** ./src/components/AboutTextC.jsx ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRouter = __webpack_require__(/*! react-router */ 233);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -36985,194 +37567,207 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var AboutText = function (_Component) {
-	    _inherits(AboutText, _Component);
+	  _inherits(AboutText, _Component);
 	
-	    function AboutText() {
-	        _classCallCheck(this, AboutText);
+	  function AboutText() {
+	    _classCallCheck(this, AboutText);
 	
-	        return _possibleConstructorReturn(this, (AboutText.__proto__ || Object.getPrototypeOf(AboutText)).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (AboutText.__proto__ || Object.getPrototypeOf(AboutText)).apply(this, arguments));
+	  }
+	
+	  _createClass(AboutText, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'ul',
+	          { role: 'nav' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '/login' },
+	              'Login'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'A dead man\'s switch is a switch that is automatically operated if the human operator becomes incapacitated, such as through death, loss of consciousness, or being bodily removed from control.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'This app allows you to set up a dead man switch for anything you want.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'You can create a switch to send an email or text message to someone after not hearing from you for a certain period of time.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'The possibilities are endless because of how configurable DeadManSwitch is. See below for examples.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'DeadManSwitch will send its pings via email or sms, or both.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Checking in after triggering the counter will reset the counter back to 0.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Messages are sent 10 minutes after the counter triggers the message.'
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          null,
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Check Interval'
+	            ),
+	            ': How often you want DeadManSwitch to send you a check. (ex. every 24 hours, every week, etc.) Can be any time period.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Check Time Range'
+	            ),
+	            ': Time range that you want checks to happen in. This is used for very short Check Intervals to prevent a trigger while you are sleeping.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Alert Method'
+	            ),
+	            ': Email, SMS, or both. If both DeadManSwitch will accept a ping response from either method.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Trigger Interval'
+	            ),
+	            ': How long after the last missed check you want to add a trigger to the counter. (ex. trigger the counter 2 hours after missed check.)'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Trigger Count'
+	            ),
+	            ': How many triggers before the switch is triggered.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Trigger Multiplier'
+	            ),
+	            ': Use this to increase the Trigger Interval after every increase of the counter. The scale is exponential. (ex. interval is set to every 2 hours and multipler is 2, then next count won\'t be added until 4 hours after the last interval, then next 8 hours, etc.)'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Vacation Delay'
+	            ),
+	            ': How long you want to turn DeadManSwitch off for when you are away. If you are going on vacation for two weeks and won\'t be able to respond to pings then set this.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Email Addess'
+	            ),
+	            ': Email to send message to.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Phone Number'
+	            ),
+	            ': Phone number to send SMS to.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Subject'
+	            ),
+	            ': Subject of the message (email only).'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Message'
+	            ),
+	            ': Message contents.'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'h4',
+	          null,
+	          'Simple example:'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Lets say you want to set up a DeadManSwitch to send a file to someone if you disappear. You want this file to be in their hands at most 24 hours after you disappear. If you always have your phone on you and you always have reception you could, for example, set the Check Interval to 6 hours (making sure you also set a Time Range), set the Trigger Interval to 2 hour, and the Trigger Count to 3. This means that if you miss a ping at 10am on Monday a trigger will be counted at 12pm, 2pm, and 4pm before the switch is triggered. This gives you a total of 6 hours to check in after a missed ping. If you disappear right after a ping it will be 12 hours before DeadManSwitch triggers (6 hours till the next ping, and 6 hours until the message triggers). Your message will be sent at 4:10pm on Monday.'
+	        ),
+	        _react2.default.createElement(
+	          'h4',
+	          null,
+	          'Complex example:'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Lets say you want to set up a DeadManSwitch to send a file to someone if you disappear, but you want to minimize the chance of a false trigger. You want this file to be in their hands at most 75 hours after you disappear. You don\'t always have your phone on you, or have spotty reception. You could, for example, set the Check Interval to 24 hours (making sure you also set a Time Range), set the Trigger Interval to 4 hour, the Trigger Count to 3, and the Trigger Multiplier to 2. This means that if you miss a ping at 10am on Monday a trigger will be counted at 2pm, 10pm, and 2pm the next day before the switch is triggered. This gives you a total of 28 hours to check in after a missed ping. If you disappear right after a ping it will be 52 hours before DeadManSwitch triggers (24 hours till the next ping, and 28 hours until the message triggers). Your message will be sent at 2:10pm on Tuesday.'
+	        )
+	      );
 	    }
+	  }]);
 	
-	    _createClass(AboutText, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'A dead man\'s switch is a switch that is automatically operated if the human operator becomes incapacitated, such as through death, loss of consciousness, or being bodily removed from control.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'This app allows you to set up a dead man switch for anything you want.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'You can create a switch to send an email or text message to someone after not hearing from you for a certain period of time.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'The possibilities are endless because of how configurable DeadManSwitch is. See below for examples.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'DeadManSwitch will send its alive pings via email or sms, or both.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Checking in after triggering the counter will reset the counter back to 0.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Messages are sent 10 minutes after the counter triggers the message.'
-	                ),
-	                _react2.default.createElement(
-	                    'ul',
-	                    null,
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Check Interval'
-	                        ),
-	                        ': How often you want DeadManSwitch to send you a check. (ex. every 24 hours, every week, etc.) Can be any time period.'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Check Time Range'
-	                        ),
-	                        ': Time range that you want checks to happen in. This is used for very short Check Intervals to prevent a trigger while you are sleeping.'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Check Method'
-	                        ),
-	                        ': Email, SMS, or both. If both DeadManSwitch will accept an alive ping from either method.'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Trigger Interval'
-	                        ),
-	                        ': How long after the last missed check you want to add a trigger to the counter. (ex. trigger the counter 2 hours after missed check.)'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Trigger Count'
-	                        ),
-	                        ': How many triggers before the switch is triggered.'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Trigger Multiplier'
-	                        ),
-	                        ': Use this to increase the Trigger Interval after every increase of the counter. The scale is exponential. (ex. interval is set to every 2 hours and multipler is 2, then next count won\'t be added until 4 hours after the last interval, then next 8 hours, etc.)'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Vacation Delay'
-	                        ),
-	                        ': How long you want to turn DeadManSwitch off for when you are away. If you are going on vacation for two weeks and won\'t be able to respond to pings then set this.'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Email Addess'
-	                        ),
-	                        ': Email to send message to.'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Phone Number'
-	                        ),
-	                        ': Phone number to send SMS to.'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Subject'
-	                        ),
-	                        ': Subject of the message (email only).'
-	                    ),
-	                    _react2.default.createElement(
-	                        'li',
-	                        null,
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            'Message'
-	                        ),
-	                        ': Message contents.'
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'h4',
-	                    null,
-	                    'Simple example:'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Lets say you want to set up a DeadManSwitch to send a file to someone if you disappear. You want this file to be in their hands at most 24 hours after you disappear. If you always have your phone on you and you always have reception you could, for example, set the Check Interval to 6 hours (making sure you also set a Time Range), set the Trigger Interval to 2 hour, and the Trigger Count to 3. This means that if you miss a ping at 10am on Monday a trigger will be counted at 12pm, 2pm, and 4pm before the switch is triggered. This gives you a total of 6 hours to check in after a missed ping. If you disappear right after a ping it will be 12 hours before DeadManSwitch triggers (6 hours till the next ping, and 6 hours until the message triggers). Your message will be sent at 4:10pm on Monday.'
-	                ),
-	                _react2.default.createElement(
-	                    'h4',
-	                    null,
-	                    'Complex example:'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Lets say you want to set up a DeadManSwitch to send a file to someone if you disappear, but you want to minimize the chance of a false trigger. You want this file to be in their hands at most 75 hours after you disappear. You don\'t always have your phone on you, or have spotty reception. You could, for example, set the Check Interval to 24 hours (making sure you also set a Time Range), set the Trigger Interval to 4 hour, the Trigger Count to 3, and the Trigger Multiplier to 2. This means that if you miss a ping at 10am on Monday a trigger will be counted at 2pm, 10pm, and 2pm the next day before the switch is triggered. This gives you a total of 28 hours to check in after a missed ping. If you disappear right after a ping it will be 52 hours before DeadManSwitch triggers (24 hours till the next ping, and 28 hours until the message triggers). Your message will be sent at 2:10pm on Tuesday.'
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return AboutText;
+	  return AboutText;
 	}(_react.Component);
 	
 	;
@@ -37180,10 +37775,78 @@
 	exports.default = AboutText;
 
 /***/ },
-/* 349 */
-/*!**********************************!*\
-  !*** ./src/components/Login.jsx ***!
-  \**********************************/
+/* 361 */
+/*!******************************************!*\
+  !*** ./src/components/PageNotFoundC.jsx ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRouter = __webpack_require__(/*! react-router */ 233);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PageNotFound = function (_React$Component) {
+	  _inherits(PageNotFound, _React$Component);
+	
+	  function PageNotFound() {
+	    _classCallCheck(this, PageNotFound);
+	
+	    return _possibleConstructorReturn(this, (PageNotFound.__proto__ || Object.getPrototypeOf(PageNotFound)).apply(this, arguments));
+	  }
+	
+	  _createClass(PageNotFound, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'h1',
+	          null,
+	          'Page Not Found.'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Go to ',
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/' },
+	            'Home Page'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return PageNotFound;
+	}(_react2.default.Component);
+	
+	exports.default = PageNotFound;
+
+/***/ },
+/* 362 */
+/*!***********************************!*\
+  !*** ./src/components/LoginC.jsx ***!
+  \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -37249,7 +37912,12 @@
 	                    "button",
 	                    { type: "button", onClick: this.createLogin, disabled: this.props.sendingLoginRequest },
 	                    this.props.sendingLoginRequest ? "Sending" : "Send login link"
-	                )
+	                ),
+	                this.props.sentLoginRequest ? _react2.default.createElement(
+	                    "div",
+	                    null,
+	                    "Please check your email for your login link"
+	                ) : _react2.default.createElement("div", null)
 	            );
 	        }
 	    }]);
@@ -37262,421 +37930,11 @@
 	Login.propTypes = {
 	    updateEmail: _react2.default.PropTypes.func.isRequired,
 	    createLogin: _react2.default.PropTypes.func.isRequired,
-	    sendingLoginRequest: _react2.default.PropTypes.bool.isRequired
+	    sendingLoginRequest: _react2.default.PropTypes.bool.isRequired,
+	    sentLoginRequest: _react2.default.PropTypes.bool.isRequired
 	};
 	
 	exports.default = Login;
-
-/***/ },
-/* 350 */
-/*!**********************************!*\
-  !*** ./src/reducers/reducers.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _actionTypes = __webpack_require__(/*! ../constants/actionTypes */ 301);
-	
-	var types = _interopRequireWildcard(_actionTypes);
-	
-	var _names = __webpack_require__(/*! ../constants/names */ 302);
-	
-	var names = _interopRequireWildcard(_names);
-	
-	var _reactCookie = __webpack_require__(/*! react-cookie */ 303);
-	
-	var _reactCookie2 = _interopRequireDefault(_reactCookie);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	// Load cookies
-	var email = _reactCookie2.default.load(names.EMAIL_COOKIE) || '';
-	var auth = _reactCookie2.default.load(names.AUTH_COOKIE) || '';
-	
-	var initialState = {
-	    email: email,
-	    authenticated: auth != +null && auth !== undefined,
-	    authCookie: auth,
-	    sendingLoginRequest: false,
-	    alarms: []
-	};
-	
-	function reducers() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case types.SENDING_LOGIN_REQUEST:
-	            return Object.assign({}, state, {
-	                sendingLoginRequest: true
-	            });
-	        case types.CREATE_LOGIN:
-	            return Object.assign({}, state, {
-	                authenticated: true
-	            });
-	        case types.LOGIN_CREATED:
-	            return Object.assign({}, state, {
-	                sendingLoginRequest: false
-	            });
-	        case types.UPDATE_EMAIL:
-	            return Object.assign({}, state, {
-	                email: action.email
-	            });
-	        default:
-	            return state;
-	    }
-	}
-	
-	exports.default = reducers;
-
-/***/ },
-/* 351 */
-/*!******************************!*\
-  !*** ./src/styles/main.scss ***!
-  \******************************/
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 352 */,
-/* 353 */,
-/* 354 */,
-/* 355 */,
-/* 356 */,
-/* 357 */
-/*!**************************************!*\
-  !*** ./src/components/Dashboard.jsx ***!
-  \**************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
-	
-	var _actions = __webpack_require__(/*! ../actions/actions.js */ 300);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	  return state;
-	};
-	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
-	  return {
-	    createLogin: function createLogin(email) {
-	      dispatch((0, _actions.createLogin)(email));
-	    },
-	    updateEmail: function updateEmail(email) {
-	      dispatch((0, _actions.updateEmail)(email));
-	    }
-	  };
-	};
-	
-	var DashboardComponent = function (_Component) {
-	  _inherits(DashboardComponent, _Component);
-	
-	  function DashboardComponent() {
-	    _classCallCheck(this, DashboardComponent);
-	
-	    return _possibleConstructorReturn(this, (DashboardComponent.__proto__ || Object.getPrototypeOf(DashboardComponent)).apply(this, arguments));
-	  }
-	
-	  _createClass(DashboardComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        'Dashboard'
-	      );
-	    }
-	  }]);
-	
-	  return DashboardComponent;
-	}(_react.Component);
-	
-	;
-	
-	var Dashboard = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(DashboardComponent);
-	
-	exports.default = Dashboard;
-
-/***/ },
-/* 358 */
-/*!********************************!*\
-  !*** ./src/components/App.jsx ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
-	
-	var _reactTabs = __webpack_require__(/*! react-tabs */ 290);
-	
-	var _actions = __webpack_require__(/*! ../actions/actions.js */ 300);
-	
-	var _reactRouter = __webpack_require__(/*! react-router */ 233);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	  return state;
-	};
-	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
-	  return {
-	    createLogin: function createLogin(email) {
-	      dispatch((0, _actions.createLogin)(email));
-	    },
-	    updateEmail: function updateEmail(email) {
-	      dispatch((0, _actions.updateEmail)(email));
-	    }
-	  };
-	};
-	
-	var AppComponent = function (_Component) {
-	  _inherits(AppComponent, _Component);
-	
-	  function AppComponent() {
-	    _classCallCheck(this, AppComponent);
-	
-	    return _possibleConstructorReturn(this, (AppComponent.__proto__ || Object.getPrototypeOf(AppComponent)).apply(this, arguments));
-	  }
-	
-	  _createClass(AppComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'ul',
-	          { role: 'nav' },
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              _reactRouter.Link,
-	              { to: '/login' },
-	              'Login'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              _reactRouter.Link,
-	              { to: '/about' },
-	              'About'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              _reactRouter.Link,
-	              { to: '/dashboard' },
-	              'Dashboard'
-	            )
-	          )
-	        ),
-	        this.props.children
-	      );
-	    }
-	  }]);
-	
-	  return AppComponent;
-	}(_react.Component);
-	
-	;
-	
-	var App = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(AppComponent);
-	
-	exports.default = App;
-
-/***/ },
-/* 359 */
-/*!*****************************************!*\
-  !*** ./src/components/Authenticate.jsx ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 205);
-	
-	var _actions = __webpack_require__(/*! ../actions/actions.js */ 300);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	  return state;
-	};
-	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
-	  return {
-	    createLogin: function createLogin(email) {
-	      dispatch((0, _actions.createLogin)(email));
-	    },
-	    updateEmail: function updateEmail(email) {
-	      dispatch((0, _actions.updateEmail)(email));
-	    }
-	  };
-	};
-	
-	var AuthenticateComponent = function (_Component) {
-	  _inherits(AuthenticateComponent, _Component);
-	
-	  function AuthenticateComponent() {
-	    _classCallCheck(this, AuthenticateComponent);
-	
-	    return _possibleConstructorReturn(this, (AuthenticateComponent.__proto__ || Object.getPrototypeOf(AuthenticateComponent)).apply(this, arguments));
-	  }
-	
-	  _createClass(AuthenticateComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        'Authenticated'
-	      );
-	    }
-	  }]);
-	
-	  return AuthenticateComponent;
-	}(_react.Component);
-	
-	;
-	
-	var Authenticate = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(AuthenticateComponent);
-	
-	exports.default = Authenticate;
-
-/***/ },
-/* 360 */
-/*!*****************************************!*\
-  !*** ./src/components/PageNotFound.jsx ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 2);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRouter = __webpack_require__(/*! react-router */ 233);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PageNotFound = function (_React$Component) {
-	  _inherits(PageNotFound, _React$Component);
-	
-	  function PageNotFound() {
-	    _classCallCheck(this, PageNotFound);
-	
-	    return _possibleConstructorReturn(this, (PageNotFound.__proto__ || Object.getPrototypeOf(PageNotFound)).apply(this, arguments));
-	  }
-	
-	  _createClass(PageNotFound, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'h1',
-	          null,
-	          'Page Not Found.'
-	        ),
-	        _react2.default.createElement(
-	          'p',
-	          null,
-	          'Go to ',
-	          _react2.default.createElement(
-	            _reactRouter.Link,
-	            { to: '/' },
-	            'Home Page'
-	          )
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return PageNotFound;
-	}(_react2.default.Component);
-	
-	exports.default = PageNotFound;
 
 /***/ }
 /******/ ]);

@@ -1,20 +1,25 @@
 import React, {Component} from 'react';
+import { Link } from 'react-router';
 
 class AboutText extends Component {
     render() {
         return <div>
+          <ul role="nav">
+            <li><Link to="/login">Login</Link></li>
+          </ul>
+          
             <p>A dead man's switch is a switch that is automatically operated if the human operator becomes incapacitated, 
             such as through death, loss of consciousness, or being bodily removed from control.</p>
             <p>This app allows you to set up a dead man switch for anything you want.</p>
             <p>You can create a switch to send an email or text message to someone after not hearing from you for a certain period of time.</p>
             <p>The possibilities are endless because of how configurable DeadManSwitch is. See below for examples.</p>
-            <p>DeadManSwitch will send its alive pings via email or sms, or both.</p>
+            <p>DeadManSwitch will send its pings via email or sms, or both.</p>
             <p>Checking in after triggering the counter will reset the counter back to 0.</p>
             <p>Messages are sent 10 minutes after the counter triggers the message.</p>
             <ul>
                 <li><strong>Check Interval</strong>: How often you want DeadManSwitch to send you a check. (ex. every 24 hours, every week, etc.) Can be any time period.</li>
                 <li><strong>Check Time Range</strong>: Time range that you want checks to happen in. This is used for very short Check Intervals to prevent a trigger while you are sleeping.</li>
-                <li><strong>Check Method</strong>: Email, SMS, or both. If both DeadManSwitch will accept an alive ping from either method.</li>
+                <li><strong>Alert Method</strong>: Email, SMS, or both. If both DeadManSwitch will accept a ping response from either method.</li>
                 <li><strong>Trigger Interval</strong>: How long after the last missed check you want to add a trigger to the counter. (ex. trigger the counter 2 hours after missed check.)</li>
                 <li><strong>Trigger Count</strong>: How many triggers before the switch is triggered.</li>
                 <li><strong>Trigger Multiplier</strong>: Use this to increase the Trigger Interval after every increase of the counter. The scale is exponential. 

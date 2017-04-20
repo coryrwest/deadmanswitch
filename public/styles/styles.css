@@ -767,4 +767,11 @@ button:disabled {
   opacity: 0.5;
   cursor: wait; }
 
+ul[role=nav] {
+  list-style: none;
+  display: inline-block; }
+  ul[role=nav] li {
+    float: left;
+    padding: 15px; }
+
 /*# sourceMappingURL=styles.css.map*/

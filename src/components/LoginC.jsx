@@ -22,6 +22,7 @@ class Login extends Component {
                 <span className="textfield__label">Your Email</span>
             </label>
             <button type="button" onClick={this.createLogin} disabled={this.props.sendingLoginRequest}>{this.props.sendingLoginRequest ? "Sending" : "Send login link"}</button>
+            {this.props.sentLoginRequest ? <div>Please check your email for your login link</div> : <div></div>}
         </form>;
     }
 };
@@ -29,7 +30,8 @@ class Login extends Component {
 Login.propTypes = {
   updateEmail: React.PropTypes.func.isRequired,
   createLogin: React.PropTypes.func.isRequired,
-  sendingLoginRequest: React.PropTypes.bool.isRequired
+  sendingLoginRequest: React.PropTypes.bool.isRequired,
+  sentLoginRequest: React.PropTypes.bool.isRequired
 };
 
 export default Login;

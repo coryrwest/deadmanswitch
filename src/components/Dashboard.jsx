@@ -18,10 +18,33 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   }
 }
 
+class AlarmRow extends Component {
+  render() {
+    return <tr></tr>;
+  }
+}
+
 class DashboardComponent extends Component {
     render() {
         return <div>
-                    Dashboard
+                  <div>
+                    Alarms
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Phone</th>
+                          <th>Subject</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {this.props.alarms.length == 0 ? "You have no alarms" : this.props.alarms.map(() => {
+                        <AlarmRow />
+                      })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>;
     }
 };
